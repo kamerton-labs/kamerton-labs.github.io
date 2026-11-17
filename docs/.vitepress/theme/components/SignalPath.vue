@@ -8,45 +8,23 @@
 // visible; with prefers-reduced-motion it never runs on its own. Each stop is a
 // button that moves the dot there and stops the loop.
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useData } from 'vitepress'
 import { useMotionGate } from '../motion'
 
-const { lang } = useData()
-const ru = computed(() => lang.value.startsWith('ru'))
-
-const t = computed(() =>
-  ru.value
-    ? {
-        label: 'Путь сигнала от сервиса до сообщения дежурному',
-        legend:
-          'Квадратом отмечено то, что Kamerton пишет по описанию системы: правила и маршруты Alertmanager. Остальные программы он ставит из их собственных чартов и связывает между собой.',
-        pause: 'Остановить',
-        play: 'Запустить',
-        stops: [
-          { name: 'Сервис', note: 'шлёт трассы, метрики и логи по OTLP' },
-          { name: 'OpenTelemetry Collector', note: 'считает по трассам запросы, ошибки и время ответа' },
-          { name: 'Prometheus, Loki, Tempo', note: 'хранят метрики, логи и трассы' },
-          { name: 'Правила', note: 'Prometheus проверяет их каждые 15 секунд', managed: true },
-          { name: 'Alertmanager', note: 'склеивает повторы и выбирает получателя', managed: true },
-          { name: 'Telegram или почта', note: '«checkout: Много ошибочных запросов»' },
-        ],
-      }
-    : {
-        label: 'Path of a signal from a service to the message for the person on call',
-        legend:
-          'Squares mark what Kamerton writes from the system description: the rules and the Alertmanager routes. It installs the other programs from their own charts and connects them.',
-        pause: 'Stop',
-        play: 'Play',
-        stops: [
-          { name: 'Service', note: 'sends traces, metrics and logs over OTLP' },
-          { name: 'OpenTelemetry Collector', note: 'derives calls, errors and latency from traces' },
-          { name: 'Prometheus, Loki, Tempo', note: 'store metrics, logs and traces' },
-          { name: 'Rules', note: 'Prometheus evaluates them every 15 seconds', managed: true },
-          { name: 'Alertmanager', note: 'groups repeats and picks the receiver', managed: true },
-          { name: 'Telegram or email', note: '“checkout: Too many failed requests”' },
-        ],
-      },
-)
+const t = {
+    label: 'Path of a signal from a service to the message for the person on call',
+    legend:
+      'Squares mark what Kamerton writes from the system description: the rules and the Alertmanager routes. It installs the other programs from their own charts and connects them.',
+    pause: 'Stop',
+    play: 'Play',
+    stops: [
+      { name: 'Service', note: 'sends traces, metrics and logs over OTLP' },
+      { name: 'OpenTelemetry Collector', note: 'derives calls, errors and latency from traces' },
+      { name: 'Prometheus, Loki, Tempo', note: 'store metrics, logs and traces' },
+      { name: 'Rules', note: 'Prometheus evaluates them every 15 seconds', managed: true },
+      { name: 'Alertmanager', note: 'groups repeats and picks the receiver', managed: true },
+      { name: 'Telegram or email', note: '“checkout: Too many failed requests”' },
+    ],
+}
 
 const last = 5
 const root = ref<HTMLElement | null>(null)

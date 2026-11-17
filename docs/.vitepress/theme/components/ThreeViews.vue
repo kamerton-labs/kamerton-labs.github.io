@@ -8,57 +8,31 @@
 // own with prefers-reduced-motion. The timer is a CSS animation on the active
 // tab's progress line, so pausing it is just animation-play-state.
 import { computed, onMounted, ref } from 'vue'
-import { useData, withBase } from 'vitepress'
+import { withBase } from 'vitepress'
 import { useMotionGate } from '../motion'
 
-const { lang } = useData()
-const ru = computed(() => lang.value.startsWith('ru'))
+const views = [
+    {
+      id: 'canvas',
+      tab: 'Canvas',
+      alt: 'Canvas of the otel-demo system: service blocks with rule counts, calls between them, Telegram and email receivers on the left',
+      caption: 'Services of the demo shop and the calls between them. Alert receivers and the message time zone on the left.',
+    },
+    {
+      id: 'rule-card',
+      tab: 'Rules',
+      alt: 'Rule list of the otel-demo system with the error-rate rule card of the checkout service open: threshold 5% and a backtest',
+      caption: 'All rules of the system. The checkout error rule is open: threshold 5%, severity, backtest.',
+    },
+    {
+      id: 'yaml',
+      tab: 'YAML',
+      alt: 'The otel-demo description in YAML mode with highlighting and line numbers',
+      caption: 'The same document as text, with field hints and errors marked on the lines themselves.',
+    },
+]
 
-const views = computed(() =>
-  ru.value
-    ? [
-        {
-          id: 'canvas',
-          tab: 'Схема',
-          alt: 'Схема системы otel-demo: блоки сервисов с числом правил, связи между ними, слева получатели Telegram и почты',
-          caption: 'Сервисы демо-магазина и вызовы между ними. Слева получатели оповещений и часовой пояс сообщений.',
-        },
-        {
-          id: 'rule-card',
-          tab: 'Правила',
-          alt: 'Список правил системы otel-demo, открыта карточка правила ошибок сервиса checkout с порогом 5% и проверкой на истории',
-          caption: 'Все правила системы. Открыта карточка правила ошибок checkout: порог 5%, важность, проверка на истории.',
-        },
-        {
-          id: 'yaml',
-          tab: 'YAML',
-          alt: 'Описание системы otel-demo в режиме YAML с подсветкой и номерами строк',
-          caption: 'Тот же документ текстом, с подсказками по полям и ошибками, отмеченными прямо в строках.',
-        },
-      ]
-    : [
-        {
-          id: 'canvas',
-          tab: 'Canvas',
-          alt: 'Canvas of the otel-demo system: service blocks with rule counts, calls between them, Telegram and email receivers on the left',
-          caption: 'Services of the demo shop and the calls between them. Alert receivers and the message time zone on the left.',
-        },
-        {
-          id: 'rule-card',
-          tab: 'Rules',
-          alt: 'Rule list of the otel-demo system with the error-rate rule card of the checkout service open: threshold 5% and a backtest',
-          caption: 'All rules of the system. The checkout error rule is open: threshold 5%, severity, backtest.',
-        },
-        {
-          id: 'yaml',
-          tab: 'YAML',
-          alt: 'The otel-demo description in YAML mode with highlighting and line numbers',
-          caption: 'The same document as text, with field hints and errors marked on the lines themselves.',
-        },
-      ],
-)
-
-const label = computed(() => (ru.value ? 'Три вида одного описания' : 'Three views of one description'))
+const label = 'Three views of one description'
 const src = (id: string, theme: 'light' | 'dark') => withBase(`/screens/${id}-${theme}.webp`)
 
 const root = ref<HTMLElement | null>(null)
@@ -77,7 +51,7 @@ const auto = computed(() => mounted.value && !reduced.value && !touched.value)
 const paused = computed(() => hovered.value || focused.value || !onScreen.value || !pageVisible.value)
 
 function select(i: number, focus = false) {
-  current.value = (i + views.value.length) % views.value.length
+  current.value = (i + views.length) % views.length
   if (focus) tabs.value[current.value]?.focus()
 }
 
@@ -87,7 +61,7 @@ function choose(i: number) {
 }
 
 function onKey(e: KeyboardEvent) {
-  const n = views.value.length
+  const n = views.length
   const map: Record<string, number> = {
     ArrowRight: current.value + 1,
     ArrowLeft: current.value - 1,
