@@ -2,13 +2,13 @@
 
 The UI is built into the same binary as the core: nothing extra to install. It edits system descriptions and shows what is happening to them. The UI is in Russian only for now; the screen names below are given in Russian with a translation. It has a light and a dark theme.
 
-The screenshots were taken from the real UI run locally without a cluster and without Prometheus. So wherever live data is needed — rule states, discovered services, active alerts — they read "no data" or "not connected".
+The screenshots were taken from the real UI run locally without a cluster and without Prometheus. So wherever live data is needed - rule states, discovered services, active alerts - they read "no data" or "not connected".
 
 ## Systems («Системы»)
 
 The list of systems with their state: number of services, rules and channels, and whether anything is firing. The «С чего начать» (getting started) block shows what is not done yet: connect Prometheus, find services, create rules, connect a channel. «Добавить систему» (Add system) creates a new description.
 
-<Shot name="systems" alt="Systems screen: a four-step getting-started block and the otel-demo system card — 16 services, 164 rules, 2 channels" />
+<Shot name="systems" alt="Systems screen: a four-step getting-started block and the otel-demo system card - 16 services, 164 rules, 2 channels" />
 
 ## Canvas («Схема»)
 
@@ -23,7 +23,7 @@ Clicking a service opens its settings, for example the «Важный серви
 A table of all the system's rules with filters by service, kind of check and state. Each rule is described as a short phrase, for example "errors above 5% for 1 min". In a rule card:
 
 - the threshold, how long the condition must hold, and the severity;
-- a backtest over a day, 3 or 7 days — how many times the rule would have fired;
+- a backtest over a day, 3 or 7 days - how many times the rule would have fired;
 - the team's own notification text with a preview.
 
 «Создать правило» (Create rule) adds a rule from the library or a custom one.

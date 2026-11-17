@@ -44,7 +44,7 @@ kubectl -n kamerton apply -f ../examples/otel-demo/system.yaml
 kubectl -n kamerton port-forward svc/kamerton 8080
 ```
 
-The UI is at `http://localhost:8080`. Set up Telegram or email under «Каналы» (Channels) — see [Notifications](./notifications) — or replace the placeholder chat ID and addresses in `system.yaml` with your own.
+The UI is at `http://localhost:8080`. Set up Telegram or email under «Каналы» (Channels) - see [Notifications](./notifications) - or replace the placeholder chat ID and addresses in `system.yaml` with your own.
 
 ## 4. Break something
 
