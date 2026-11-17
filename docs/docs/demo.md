@@ -6,7 +6,7 @@ All files are in [kamerton-labs/examples](https://github.com/kamerton-labs/examp
 
 ## Prerequisites
 
-A small Kubernetes cluster (kind, k3s, colima), `kubectl`, `helm` and `docker`. Clone both repositories side by side:
+A small Kubernetes cluster (kind, k3s, colima), `kubectl` and `helm`. Clone both repositories side by side:
 
 ```sh
 git clone https://github.com/kamerton-labs/kamerton.git
@@ -17,14 +17,11 @@ cd kamerton
 ## 1. Install Kamerton with the whole stack
 
 ```sh
-docker build -t kamerton:dev .
-# make the image visible to the cluster, for example:
-#   kind load docker-image kamerton:dev
 helm install kamerton ./deploy/helm/kamerton -n kamerton --create-namespace \
   --dependency-update -f ../examples/otel-demo/values-kamerton.yaml
 ```
 
-`values-kamerton.yaml` uses the locally built image and sets `externalURL: http://localhost:8080`, so links in notifications point to the port-forward. Change it when you expose Kamerton through an ingress.
+The chart pulls the published image. `values-kamerton.yaml` keeps Prometheus small (7 days of data, 1Gi memory limit) and sets `externalURL: http://localhost:8080`, so links in notifications point to the port-forward. Change it when you expose Kamerton through an ingress.
 
 ## 2. Install the shop
 
@@ -44,7 +41,7 @@ kubectl -n kamerton apply -f ../examples/otel-demo/system.yaml
 kubectl -n kamerton port-forward svc/kamerton 8080
 ```
 
-The UI is at `http://localhost:8080`. Set up Telegram or email under «Каналы» (Channels) - see [Notifications](./notifications) - or replace the placeholder chat ID and addresses in `system.yaml` with your own.
+The UI is at `http://localhost:8080`. Set up Telegram or email under "Channels" - see [Notifications](./notifications) - or replace the placeholder chat ID and addresses in `system.yaml` with your own.
 
 ## 4. Break something
 
@@ -54,7 +51,7 @@ The shop has fault flags. Open its flag page:
 kubectl -n otel-demo port-forward svc/frontend-proxy 8081:8080
 ```
 
-Flags are at `http://localhost:8081/feature`. Turn one on, for example `paymentFailure`. Within a few minutes the alert appears under «Оповещения» (Alerts) and in the configured channel. The UI also shows the chain of affected services with the probable source: Kamerton walks the `dependsOn` graph.
+Flags are at `http://localhost:8081/feature`. Turn one on, for example `paymentFailure`. Within a few minutes the alert appears under "Alerts" and in the configured channel. The UI also shows the chain of affected services with the probable source: Kamerton walks the `dependsOn` graph.
 
 ## What is in the shop's description
 

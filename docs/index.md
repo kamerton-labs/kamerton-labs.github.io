@@ -83,13 +83,13 @@ spec:
 </div>
 </div>
 
-The 16 services of the demo get 164 rules. Nearly every threshold in them comes from `defaults`; a value of its own is set only where it is needed, such as a 1% error threshold for the `Charge` operation of `payment`. The rule above was generated with `language: en`. The value and time in the message are made up for the example, the words are the template's.
+The 16 services of the demo get 164 rules. Nearly every threshold in them comes from `defaults`; a value of its own is set only where it is needed, such as a 1% error threshold for the `Charge` operation of `payment`. The words in the rule and the message are Kamerton's default English text. The value and time in the message are made up for the example.
 
 ## You can edit the canvas, the rule list and the YAML in any order
 
 <ThreeViews class="k-wide" />
 
-These are three views of one description. A service added on the canvas shows up in the YAML straight away. A threshold changed in a rule card changes only that place in the text, and the comments around it stay. The screenshots come from the UI running locally without a cluster, which is why the rules say "no data". The UI is in Russian only for now.
+These are three views of one description. A service added on the canvas shows up in the YAML straight away. A threshold changed in a rule card changes only that place in the text, and the comments around it stay. The screenshots come from the UI running locally without a cluster, which is why the rules say "no data". The UI is in English; Russian can be picked in the language menu in the sidebar.
 
 ## What happens between a failure and the message
 
@@ -111,42 +111,40 @@ Before you turn a rule on or move a threshold, its card shows how many times it 
 
 ## If you already run Prometheus
 
-You do not need a second one. The «Найти установленные» button (find installed) asks the Kubernetes API for services and Prometheus Operator resources, checks each candidate with a request and offers to use it. The network is not scanned, and Kamerton sends only GET requests to the addresses it finds.
+You do not need a second one. The "Find installed" button asks the Kubernetes API for services and Prometheus Operator resources, checks each candidate with a request and offers to use it. The network is not scanned, and Kamerton sends only GET requests to the addresses it finds.
 
 If each team has its own Prometheus, create several sets of programs and pick a set for each system. Rules and routes are delivered as PrometheusRule and AlertmanagerConfig objects with the labels the right operator instance selects. Your own Prometheus cannot be connected without Prometheus Operator yet. More in [Programs you already run](/docs/existing-programs).
 
-<Shot name="status" class="k-wide-half" alt="The «Состояние Kamerton» (Kamerton status) page with two sets of programs, «Основной» (main) and «Команда Б» (team B)" caption="Two sets of programs. Without a cluster they are shown as not connected." />
+<Shot name="status" class="k-wide-half" alt="The Kamerton status page with two sets of programs" caption="Two sets of programs. Without a cluster they are shown as not connected." />
 
 ## How a message reads
 
 Kamerton replaces Alertmanager's templates with its own. The first line has the severity, the system and the environment. Then one line per alert: the service, what happened, the current value and the threshold, since when. Times are in the team's zone with the offset, for example "09:18 16.11 UTC+5". With `externalURL` set, each alert links to its page in the UI. Grouped alerts are listed up to eight, then a count.
 
-Messages are in Russian or English. Any rule can have its own title, explanation and first action for the person on call, with the placeholders `{value}`, `{threshold}`, `{service}`, `{since}`. Channels are connected in the UI. The bot token and the mail password are kept only in Secrets and never end up in the description. More in [Notifications](/docs/notifications).
+Messages are in English by default, or in Russian with `language: ru`. Any rule can have its own title, explanation and first action for the person on call, with the placeholders `{value}`, `{threshold}`, `{service}`, `{since}`. Channels are connected in the UI. The bot token and the mail password are kept only in Secrets and never end up in the description. More in [Notifications](/docs/notifications).
 
-<Shot name="channels" :dark="false" class="k-wide-half" alt="The «Каналы уведомлений» (notification channels) page: a connected Telegram bot, three chats and email" caption="The channels screen. The bot and chats in the screenshot are for demonstration: channels cannot be set up in a local run." />
+<Shot name="channels" :dark="false" class="k-wide-half" alt="The Notification channels page: a connected Telegram bot, three chats and email" caption="The channels screen. The bot and chats in the screenshot are for demonstration: channels cannot be set up in a local run." />
 
 ## What it does not do yet
 
-There is no published image or chart repository; you build the image from source. There is one shared user, with no roles and no audit log. The UI is in Russian only. One installation works with one cluster. We have tested Kamerton on a single-node k3s next to the OpenTelemetry Demo, but there has been no long run for false alarms yet: a 72-hour run under real load is planned. Email has been tested only against a test SMTP server. The rest is in [Limitations and status](/docs/limitations).
+There is no chart repository yet: the chart is installed from a clone. There is one shared user, with no roles and no audit log. The UI and messages are available in two languages, English and Russian. One installation works with one cluster. We have tested Kamerton on a single-node k3s next to the OpenTelemetry Demo, but there has been no long run for false alarms yet: a 72-hour run under real load is planned. Email has been tested only against a test SMTP server. The rest is in [Limitations and status](/docs/limitations).
 
 ## How to install it
 
-You need Kubernetes 1.27 or newer, Helm and Docker. The image is built from a clone of the repository; the observability programs are installed as chart dependencies with pinned versions.
+You need Kubernetes 1.27 or newer and Helm. The chart is installed from a clone of the repository and pulls the published image `ghcr.io/kamerton-labs/kamerton` (amd64 and arm64). The observability programs are installed as chart dependencies with pinned versions.
 
 <div class="vp-doc k-wide-code">
 
 ```sh
 git clone https://github.com/kamerton-labs/kamerton.git && cd kamerton
-docker build -t kamerton:dev .
 helm install kamerton ./deploy/helm/kamerton \
   --namespace kamerton --create-namespace --dependency-update \
-  --set image.repository=kamerton --set image.tag=dev \
   --set externalURL=http://localhost:8080
 ```
 
 </div>
 
-How to make the image available to the cluster, turn on sign-in and apply the demo description is in the [quick start](/docs/quick-start). The demo shop with its failure scenarios is described in [the demo section](/docs/demo).
+How to open the UI, turn on sign-in and describe a first system is in the [quick start](/docs/quick-start). The demo shop with its failure scenarios is described in [the demo section](/docs/demo).
 
 <VideoTour />
 

@@ -14,7 +14,7 @@ import { useMotionGate } from '../motion'
 const views = [
     {
       id: 'canvas',
-      tab: 'Canvas',
+      tab: 'Diagram',
       alt: 'Canvas of the otel-demo system: service blocks with rule counts, calls between them, Telegram and email receivers on the left',
       caption: 'Services of the demo shop and the calls between them. Alert receivers and the message time zone on the left.',
     },

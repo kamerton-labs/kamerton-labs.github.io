@@ -4,9 +4,9 @@ If Prometheus, Alertmanager or Grafana already run in the cluster, Kamerton find
 
 ## The Kamerton status page
 
-The «Состояние Kamerton» (Kamerton status) page shows the Prometheus, Alertmanager, Grafana, Loki, Tempo and OpenTelemetry Collector that Kamerton uses - a **set of programs**. The addresses given at install time form the built-in set («Основной», main).
+The "Kamerton status" page shows the Prometheus, Alertmanager, Grafana, Loki, Tempo and OpenTelemetry Collector that Kamerton uses - a **set of programs**. The addresses given at install time form the built-in set, "Main".
 
-<Shot name="status" alt="Kamerton status page: the main set with six programs and the set «Команда Б» (team B) with one operator label" caption="Two sets of programs. Taken without a cluster, so the programs show as not connected." />
+<Shot name="status" alt="Kamerton status page: the main set with six programs and a second set with one operator label" caption="Two sets of programs. Taken without a cluster, so the programs show as not connected." />
 
 - Every address can be changed. It is checked before saving: works, does not answer, or "this is not Prometheus". Kamerton sends only GET requests to the address.
 - An address of the built-in set can be reset to the install-time value.
@@ -14,7 +14,7 @@ The «Состояние Kamerton» (Kamerton status) page shows the Prometheus,
 
 ## Find installed programs
 
-«Найти установленные» (Find installed) asks the Kubernetes API for Services in all namespaces and Prometheus Operator resources (`Prometheus`, `Alertmanager`). The network is not scanned. Each candidate is confirmed with an HTTP check, and a found program can be put into a set.
+"Find installed" asks the Kubernetes API for Services in all namespaces and Prometheus Operator resources (`Prometheus`, `Alertmanager`). The network is not scanned. Each candidate is confirmed with an HTTP check, and a found program can be put into a set.
 
 For this the chart grants the core read-only access: Services (get, list) and the operator resources (get, list). If you do not want that, turn it off with `stacks.discovery.enabled=false`; addresses can still be typed in by hand.
 
@@ -22,7 +22,7 @@ Discovery works only in a cluster. When run locally, the page explains why it is
 
 ## Several sets
 
-A company with several Prometheus instances, for example one per team, adds sets with «Добавить набор» (Add set) and picks a set per system: on the canvas, in the system's settings, or with a field in the description:
+A company with several Prometheus instances, for example one per team, adds sets with "Add set" and picks a set per system: on the canvas, in the system's settings, or with a field in the description:
 
 ```yaml
 spec:
@@ -45,7 +45,7 @@ To try it on one cluster, [kamerton-labs/examples](https://github.com/kamerton-l
 kubectl apply -f second-prometheus/prometheus.yaml
 ```
 
-Then open «Состояние Kamerton», press «Найти установленные», tick the new Prometheus and create a set from it. A system that picks this set gets its rules labelled so that only this Prometheus loads them. `kubectl delete namespace team-b` removes it.
+Then open "Kamerton status", press "Find installed", tick the new Prometheus and create a set from it. A system that picks this set gets its rules labelled so that only this Prometheus loads them. `kubectl delete namespace team-b` removes it.
 
 ## Your own Prometheus from the start
 
@@ -53,7 +53,6 @@ To skip the bundled Prometheus and use yours:
 
 ```sh
 helm install kamerton ./deploy/helm/kamerton -n kamerton --create-namespace --dependency-update \
-  --set image.repository=kamerton --set image.tag=dev \
   --set kube-prometheus-stack.enabled=false \
   --set bringYourOwn.prometheus.enabled=true \
   --set bringYourOwn.prometheus.url=http://prometheus-operated.monitoring:9090 \

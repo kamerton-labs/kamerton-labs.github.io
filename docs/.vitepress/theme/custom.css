@@ -169,7 +169,7 @@ body {
   overflow-x: auto;
 }
 
-/* Key–value tables written with an empty header row (| | |). */
+/* Key-value tables written with an empty header row (| | |). */
 .vp-doc thead:not(:has(th:not(:empty))) {
   display: none;
 }

@@ -1,10 +1,10 @@
 # Notifications
 
-Alertmanager delivers notifications along the routes Kamerton generates from the system description. Channels are Telegram and email. The easiest way to connect them is the «Каналы» (Channels) screen in the UI; Telegram and email are set up from the UI only in a cluster.
+Alertmanager delivers notifications along the routes Kamerton generates from the system description. Channels are Telegram and email. The easiest way to connect them is the "Channels" screen in the UI; Telegram and email are set up from the UI only in a cluster.
 
-Channels are shared by all systems. What each system sends to which chat or address is chosen inside the system: on the canvas, in the «Куда отправлять оповещения» (where alerts go) panel.
+Channels are shared by all systems. What each system sends to which chat or address is chosen inside the system: on the canvas, in the "Where to send alerts" panel.
 
-<Shot name="channels" :dark="false" alt="Notification channels page: a Telegram bot, the chats «Дежурные», «Команда оплаты», «Сводка для руководства» and an “add chat” block" caption="The Channels screen. The bot and chats here are demo data, not real ones." />
+<Shot name="channels" :dark="false" alt="Notification channels page: a Telegram bot, three chats and an add-chat block" caption="The Channels screen. The bot and chats here are demo data, not real ones." />
 
 ## Telegram
 
@@ -18,7 +18,7 @@ Channels are shared by all systems. What each system sends to which chat or addr
 
 1. Connect the mail server: SMTP `host:port` (with hints for Yandex, Mail.ru and Gmail), sender address, login and password. The core logs in to check the settings and stores the password in the Secret `kamerton-smtp` (key `password`). The server, sender and login are kept in the ConfigMap `kamerton-email-state`. The password is never written to the description, logs or API responses.
 2. Add recipients: a name and one or more addresses, for example "On call" with two addresses. A test email checks delivery.
-3. In a system, «Куда отправлять оповещения» → «Добавить получателя» (add receiver) offers both Telegram chats and email recipients.
+3. In a system, "Where to send alerts" > "Add receiver" offers both Telegram chats and email recipients.
 
 Changing the server or a recipient's addresses later updates every system that uses it.
 
@@ -53,7 +53,7 @@ notifications:
       - receiver: team-email
         severities: [critical]
         services: [payment]
-  language: en
+  language: ru                    # default: en
   timeZone: Europe/Berlin
 ```
 
@@ -76,15 +76,15 @@ Grouped alerts are listed compactly: at most 8, then a count.
 
 ## Language and time zone
 
-Messages are in Russian by default; `spec.notifications.language: en` switches them and the alert descriptions to English.
+Messages are in English by default. `spec.notifications.language: ru` switches the message text to Russian; the same choice is the "Message language" control in the "Where to send alerts" panel on the canvas. The `summary` and `description` annotations of the rules stay in English.
 
-Times are in UTC by default. Another zone is set in `spec.notifications.timeZone` as an IANA name, for example `Asia/Almaty` or `Europe/Berlin`, or on the canvas in the «Куда отправлять оповещения» panel. Times carry the offset: "09:18 16.11 UTC+5".
+Times are in UTC by default. Another zone is set in `spec.notifications.timeZone` as an IANA name, for example `Asia/Almaty` or `Europe/Berlin`, or on the canvas in the "Where to send alerts" panel. Times carry the offset: "09:18 16.11 UTC+5".
 
 Kamerton computes the offsets itself from the time-zone database embedded in the binary, including daylight-saving changes, so a zone works even if the Alertmanager image lacks it.
 
 ## Your own text
 
-Any rule can carry the team's own notification text in any language: a title, an explanation and a first action for the person on call. In the UI it is set in the rule card, under «Текст оповещения» (notification text), with a preview.
+Any rule can carry the team's own notification text in any language: a title, an explanation and a first action for the person on call. In the UI it is set in the rule card, under "Alert text", with a preview.
 
 ```yaml
 errorRate:
