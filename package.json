@@ -1,0 +1,22 @@
+{
+  "name": "kamerton-site",
+  "private": true,
+  "type": "module",
+  "description": "Kamerton website: landing page and documentation",
+  "license": "AGPL-3.0-only",
+  "packageManager": "pnpm@12.4.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "@fontsource-variable/geist": "5.3.0",
+    "@fontsource-variable/geist-mono": "5.3.0",
+    "vitepress": "1.6.4",
+    "vue": "3.5.45"
+  }
+}
