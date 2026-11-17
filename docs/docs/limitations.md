@@ -29,14 +29,14 @@ A single-node k3s cluster with the OpenTelemetry Demo:
 
 ## Not done yet, and known limits
 
-- No published container image or chart repository. You build the image from source.
+- No chart repository yet. The chart is installed from a clone of the repository.
 - One shared user, no roles or per-user audit.
 - No long false-alert run yet. A 72-hour run on real traffic is planned.
 - No pruning. An object a system stops generating (for example its AlertmanagerConfig after the last receiver is removed) stays until the system itself is deleted. Deleting a system removes all its objects.
 - Email is verified only against a test SMTP server, not a real mail provider.
 - Your own Prometheus needs the Prometheus Operator. Pushing to Prometheus or Grafana HTTP APIs is not implemented.
 - One cluster per installation. Several clusters are not supported.
-- The UI is in Russian only. Notifications can be Russian or English.
+- Two languages: the UI and notifications are available in English and Russian, no others.
 - Dashboards are basic. Notifications are not yet enriched with traces or logs.
 - Channels and finding installed programs need a cluster. They cannot be set up when running locally.
 

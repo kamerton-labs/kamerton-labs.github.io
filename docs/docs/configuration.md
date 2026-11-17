@@ -8,7 +8,7 @@ Secrets - the Telegram bot token, the SMTP password, the Grafana admin password 
 
 | Value | Default | What it sets |
 | --- | --- | --- |
-| `image.repository`, `image.tag` | `ghcr.io/kamerton-labs/kamerton`, chart version | The core image. No image is published yet: build your own and point these at it. |
+| `image.repository`, `image.tag` | `ghcr.io/kamerton-labs/kamerton`, chart version | The core image, published for linux/amd64 and linux/arm64. An empty tag means the chart's version. For your own build (`make docker`), point these at it. |
 | `replicaCount` | `1` | Replicas. More than one requires `controller.leaderElect=true`. |
 | `controller.enabled` | `true` | The controller that applies system descriptions. |
 | `controller.leaderElect` | `false` | Leader election; needed with several replicas. Telegram polling runs on the leader only. |
@@ -44,7 +44,7 @@ Login is off until one of the two is set.
 | Value | Default | What it sets |
 | --- | --- | --- |
 | `stacks.configMapName` | `kamerton-stacks` | ConfigMap holding the sets. |
-| `stacks.discovery.enabled` | `true` | «Найти установленные» (Find installed): read access to Services and Prometheus Operator resources. |
+| `stacks.discovery.enabled` | `true` | "Find installed": read access to Services and Prometheus Operator resources. |
 | `endpoints.*` | addresses of the bundled programs | Prometheus, Alertmanager, Grafana, Loki, Tempo and Collector health addresses - the built-in set. |
 | `bringYourOwn.prometheus.enabled`, `url`, `alertmanagerUrl` | off | Your own Prometheus and Alertmanager. Disable `kube-prometheus-stack.enabled`. |
 | `bringYourOwn.grafana.enabled`, `url` | off | Your own Grafana. Disable `grafana.enabled`. |
