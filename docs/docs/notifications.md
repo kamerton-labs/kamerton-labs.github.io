@@ -12,7 +12,7 @@ Channels are shared by all systems. What each system sends to which chat or addr
 2. Add the bot to your groups. The core polls Telegram and lists the chats within seconds. Chats the bot is removed from are marked unavailable. A group upgraded to a supergroup is followed to its new ID, including receivers in the description.
 3. Send a test message, choose severities (and optionally services) for the chat, and save. Receivers and routes are written into the system description and the controller regenerates the AlertmanagerConfig.
 
-**Telegram's limits.** Telegram keeps updates for 24 hours and has no "list my chats" call. A chat the bot joined long before Kamerton started does not appear by itself: check it by ID on the same screen, or re-add the bot. A bot may have only one update consumer and no webhook — use a dedicated bot for Kamerton.
+**Telegram's limits.** Telegram keeps updates for 24 hours and has no "list my chats" call. A chat the bot joined long before Kamerton started does not appear by itself: check it by ID on the same screen, or re-add the bot. A bot may have only one update consumer and no webhook - use a dedicated bot for Kamerton.
 
 ## Email
 
@@ -28,7 +28,7 @@ Email sending has been verified against a test SMTP server, not a real mail prov
 
 ## Receivers and routes in the description
 
-Whatever you set up in the UI is written into the description in the usual shape. Receivers can also be written by hand — they keep working and the UI leaves them untouched.
+Whatever you set up in the UI is written into the description in the usual shape. Receivers can also be written by hand - they keep working and the UI leaves them untouched.
 
 ```yaml
 notifications:
@@ -57,10 +57,10 @@ notifications:
   timeZone: Europe/Berlin
 ```
 
-- `critical`, `warning` — receivers of alerts of every service with that severity.
-- `routes` — a receiver only for the listed services (and, if given, only those severities).
-- `groupBy` — labels that group alerts into one message.
-- `repeatInterval` — how often to repeat a message for an alert that is still firing.
+- `critical`, `warning` - receivers of alerts of every service with that severity.
+- `routes` - a receiver only for the listed services (and, if given, only those severities).
+- `groupBy` - labels that group alerts into one message.
+- `repeatInterval` - how often to repeat a message for an alert that is still firing.
 
 Descriptions that send notifications must live in Kamerton's namespace. Which Secret references are accepted and why: [Security](./security#secret-references).
 

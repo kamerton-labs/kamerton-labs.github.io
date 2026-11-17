@@ -2,7 +2,7 @@
 
 The Helm values and core flags that matter most. The full list with comments is in [values.yaml](https://github.com/kamerton-labs/kamerton/blob/main/deploy/helm/kamerton/values.yaml).
 
-Secrets — the Telegram bot token, the SMTP password, the Grafana admin password — are never set in values. See [Security](./security).
+Secrets - the Telegram bot token, the SMTP password, the Grafana admin password - are never set in values. See [Security](./security).
 
 ## Kamerton core
 
@@ -45,7 +45,7 @@ Login is off until one of the two is set.
 | --- | --- | --- |
 | `stacks.configMapName` | `kamerton-stacks` | ConfigMap holding the sets. |
 | `stacks.discovery.enabled` | `true` | «Найти установленные» (Find installed): read access to Services and Prometheus Operator resources. |
-| `endpoints.*` | addresses of the bundled programs | Prometheus, Alertmanager, Grafana, Loki, Tempo and Collector health addresses — the built-in set. |
+| `endpoints.*` | addresses of the bundled programs | Prometheus, Alertmanager, Grafana, Loki, Tempo and Collector health addresses - the built-in set. |
 | `bringYourOwn.prometheus.enabled`, `url`, `alertmanagerUrl` | off | Your own Prometheus and Alertmanager. Disable `kube-prometheus-stack.enabled`. |
 | `bringYourOwn.grafana.enabled`, `url` | off | Your own Grafana. Disable `grafana.enabled`. |
 

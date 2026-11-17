@@ -1,7 +1,7 @@
 ---
 layout: home
 markdownStyles: false
-title: Kamerton — alert rules and notifications for Kubernetes services from their description
+title: Kamerton - alert rules and notifications for Kubernetes services from their description
 titleTemplate: false
 description: Kamerton installs Prometheus, Alertmanager, Grafana, Loki, Tempo and the OpenTelemetry Collector with one Helm command and writes their alert rules and routes from a short system description.
 ---

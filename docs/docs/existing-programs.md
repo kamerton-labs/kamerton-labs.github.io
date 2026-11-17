@@ -4,7 +4,7 @@ If Prometheus, Alertmanager or Grafana already run in the cluster, Kamerton find
 
 ## The Kamerton status page
 
-The «Состояние Kamerton» (Kamerton status) page shows the Prometheus, Alertmanager, Grafana, Loki, Tempo and OpenTelemetry Collector that Kamerton uses — a **set of programs**. The addresses given at install time form the built-in set («Основной», main).
+The «Состояние Kamerton» (Kamerton status) page shows the Prometheus, Alertmanager, Grafana, Loki, Tempo and OpenTelemetry Collector that Kamerton uses - a **set of programs**. The addresses given at install time form the built-in set («Основной», main).
 
 <Shot name="status" alt="Kamerton status page: the main set with six programs and the set «Команда Б» (team B) with one operator label" caption="Two sets of programs. Taken without a cluster, so the programs show as not connected." />
 

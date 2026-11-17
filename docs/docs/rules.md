@@ -54,12 +54,12 @@ Factor: `latency.aboveNormalFactor`. Switch off: `latency.aboveNormalFactor: 0`.
 
 ### Requests stopped arriving
 
-`KamertonRequestsStopped`. A service nobody can reach writes no errors — it simply stops receiving calls. The rule compares the current rate of incoming calls with the normal one: the average over the last day, counted only where data exists.
+`KamertonRequestsStopped`. A service nobody can reach writes no errors - it simply stops receiving calls. The rule compares the current rate of incoming calls with the normal one: the average over the last day, counted only where data exists.
 
 | | |
 | --- | --- |
 | Fires | at or below 10% of normal (`threshold: 0.1`), when normal is above 0.02 calls per second (about one a minute), holds 2 min |
-| Stays silent | with less than an hour of history; while data is missing for most services of the system at once — then the telemetry pipeline has stopped, not the service |
+| Stays silent | with less than an hour of history; while data is missing for most services of the system at once - then the telemetry pipeline has stopped, not the service |
 | Default | on for critical `http` and `grpc` services; queues and databases get it only when set on the service |
 | Fields | `trafficDrop.enabled`, `threshold`, `minRequestsPerSecond`, `for`, `severity` |
 
