@@ -31,7 +31,7 @@ A noisy rule has a "noisy" mark in the table, and the "Noisy" filter shows only 
 
 "Create rule" adds a rule from the library or a custom one.
 
-<Shot name="rule-card" alt="Rule list filtered to the checkout service, with the error-rate rule card open: error share, pending period and severity fields" />
+<Shot name="rule-card" alt="Rule list filtered to the checkout service, with the error-rate rule card open: thresholds, backtest and how often the rule fired" />
 
 ## YAML
 
@@ -55,7 +55,7 @@ What is firing now across all systems, grouped into incidents. An incident names
 
 The "History" view lists past incidents, newest first, with their duration. Each one can get a note: the cause and what helped. Notes written in reply to the "incident over" message in Telegram show up here too. See [Incidents](./incidents).
 
-Without a connected Alertmanager this screen is empty, so there is no screenshot here.
+<Shot name="incident" alt="Alerts screen with one incident: no ready pods for payment and three muted alerts of the services that call it" />
 
 ## Runbooks
 

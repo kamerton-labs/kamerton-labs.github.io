@@ -29,7 +29,19 @@ A single-node k3s cluster with the OpenTelemetry Demo:
 - sets of programs work, including finding installed programs and a second Prometheus;
 - eBPF auto-instrumentation records the demo's services when it runs privileged.
 
-New in 0.2.0 and not on this list yet: grouping by cause, the follow-up, the incident history, the "Useful" and "Noise" buttons, the noise statistics. They have had little time on a real cluster.
+A clean installation of 0.2.0 on an Ubuntu 24.04 server, k3s inside Docker, following [On a Linux server](./linux):
+
+- the chart installs from the published image, all pods run within a minute;
+- the demo description produces its 195 rules;
+- with payment scaled to zero the alert about the cause arrives, the alerts of its callers are muted, the evidence names the scaling, and the incident lands in the history.
+
+Grouping by cause, the follow-up, the incident history, the "Useful" and "Noise" buttons and the noise statistics are new in 0.2.0. Each was tried on these two clusters and nowhere else yet.
+
+Found on that installation and not fixed in 0.2.0:
+
+- a description that names a Telegram or email receiver before its Secret exists gets its whole Alertmanager configuration rejected by the Prometheus Operator: nothing is sent and nothing is muted until the channel is connected or the receiver removed;
+- right after the demo shop starts, a few error alerts fire for about three minutes while its services come up;
+- on a workload younger than the incident, the evidence lists its first rollout as "new version".
 
 ## Not done yet, and known limits
 

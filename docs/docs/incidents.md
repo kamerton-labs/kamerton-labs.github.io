@@ -8,6 +8,8 @@ When `payment` goes down, `checkout` starts failing, then `frontend`, then every
 
 All three are new in 0.2.0 and on by default. They are covered by unit tests but have had little time on a real cluster. See [Limitations and status](./limitations).
 
+<Shot name="incident" alt="Alerts screen with one incident: no ready pods for payment, what changed, and three muted alerts of checkout and frontend" caption="A test on a fresh installation: payment was scaled to zero. One alert about the cause, three alerts of its callers muted." />
+
 ## Muting by cause
 
 The AlertmanagerConfig that Kamerton generates for a system carries inhibit rules built from `dependsOn`:
@@ -115,6 +117,8 @@ If nothing useful is found yet, Kamerton tries again about 1 and 3 minutes later
 ## Incident history
 
 Kamerton keeps a record of every incident: the system, the root services and their alerts, the affected services, start, end, duration and the evidence of the follow-up. An incident still going on is listed as open. The UI shows the history on the Alerts screen, in the "History" view.
+
+<Shot name="history" alt="History view: the payment incident with its duration, the evidence and a note with the cause and what helped" />
 
 ### Notes: cause and what helped
 
