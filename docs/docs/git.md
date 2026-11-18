@@ -138,9 +138,9 @@ kamerton generate -f systems/shop.yaml -o generated/shop
 
 ## In the UI
 
-Before a change goes to the repository, a dialog shows the file, the branch and the repository, says in words which rules the change affects ("cart · KamertonErrorRateHigh: threshold 2% -> 4%") and takes the commit message. With login on, the person's name goes into the commit.
+The project sits at the top of the sidebar: its name, the branch and the folder it is read from, and a dot that turns red when the repository cannot be read or a file is not applied. The "Git" item below opens the repository page: address, branch, applied commit, open pull requests and the description files with their state. "Pull" there reads the branch at once.
 
-The Systems screen names the project, links to the repository and the applied commit, has "Check now" for when a minute is too long, and lists the open pull or merge requests Kamerton made. A system with an open request says so.
+Saving a system from git is a push. A "Commit" dialog shows the file and the branch, says which rules change ("cart · KamertonErrorRateHigh: threshold 5% -> 3%") and takes the message. With login on, the person's name goes into the commit.
 
 ## A check in CI
 
