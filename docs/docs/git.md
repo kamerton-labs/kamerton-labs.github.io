@@ -6,7 +6,7 @@ New in 0.3.0. Tried on the k3s test cluster with a repository of one system: add
 
 ## Connect a repository
 
-Open "Git" in the sidebar. The form has two modes.
+Open "Project" in the sidebar; git is a block on that page. The form has two modes.
 
 - **Open**: the repository already holds a project. Enter its address and press "Test": Kamerton reads the repository and says what it found, without storing anything. "Connect" then starts following it.
 - **Create**: start a project. Kamerton writes the project file, a README and a `.gitignore` into the folder you name, `observability` by default, and leaves everything else in the repository alone. It works in an empty repository (leave the folder empty to use its root) and in one that already has code. With pull requests on, the new project arrives as a pull request. Creating needs a token with write access and push turned on.
@@ -96,7 +96,7 @@ Within the interval Kamerton sees the new commit, validates every file, generate
 
 Saving a system from git does not touch the repository or the cluster. The change is kept as a change to push, and the system's page says "Saved, not pushed". So do a new system and a removal.
 
-"Git" in the sidebar lists the changes to push, each with what it does to the rules. "Push" opens a "Commit" dialog with the message, and writes all of them in one commit:
+"Project" in the sidebar lists the changes to push, each with what it does to the rules. Write a message above the list and press "Commit & Push": all of them go out in one commit.
 
 | Push mode | What Push does |
 | --- | --- |
