@@ -9,6 +9,7 @@ function sidebar(): DefaultTheme.SidebarItem[] {
       text: 'Getting started',
       items: [
         { text: 'Quick start', link: '/docs/quick-start' },
+        { text: 'On a Linux server', link: '/docs/linux' },
         { text: 'Demo shop', link: '/docs/demo' },
         { text: 'Web UI tour', link: '/docs/ui-tour' },
       ],
