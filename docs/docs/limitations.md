@@ -1,6 +1,6 @@
 # Limitations and status
 
-Version 0.2.3, early. Below: what works, where it was tried and what is missing. We do not promise dates.
+Version 0.2.4, early. Below: what works, where it was tried and what is missing. We do not promise dates.
 
 ## What works
 
@@ -42,6 +42,8 @@ Found on that installation. Fixed in 0.2.1: a description that named a Telegram 
 Also found there and changed in 0.2.3: the first rollout of a workload is now worded "first deployed", not "new version"; alerts that linger after an incident ends are shown as its tail, not as a new incident; the demo instructions wait for the shop to start before describing it.
 
 Since 0.2.3 the lingering alerts are also kept out of the channels, by a short silence on exactly those alerts. Tried on the k3s test cluster only.
+
+Upgrading to 0.2.3 with `helm upgrade --reuse-values` left the new pod crashing on an empty `incidents.tailMute`; the old pod kept serving. Fixed in 0.2.4, and these pages now use `--reset-then-reuse-values`.
 
 ## Not done yet, and known limits
 

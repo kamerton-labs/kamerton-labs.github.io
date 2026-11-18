@@ -17,7 +17,7 @@ Without login, open the UI only through `kubectl port-forward` or a proxy with a
 ```sh
 kubectl -n kamerton create secret generic kamerton-auth \
   --from-literal=username=admin --from-literal=password='<strong password>'
-helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reuse-values \
+helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-values \
   --set auth.existingSecret=kamerton-auth
 ```
 

@@ -81,7 +81,7 @@ Installed from their own charts, versions pinned in `Chart.yaml`. Each has `<nam
 Almost every rule reads span metrics, which the Collector derives from traces. A service that sends no traces gets little from Kamerton. For such services the chart can install [OpenTelemetry eBPF Instrumentation](https://opentelemetry.io/docs/zero-code/obi/) (OBI v1.0.0, Apache-2.0, formerly Grafana Beyla). It is off by default.
 
 ```sh
-helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reuse-values \
+helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-values \
   --set autoInstrument.enabled=true \
   --set 'autoInstrument.namespaces.include={shop}'
 ```
