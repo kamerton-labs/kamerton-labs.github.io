@@ -68,7 +68,7 @@ There is one place where such a system changes: its file. How the UI takes part 
 | `pullRequest` | The change is pushed to a new branch `kamerton/<system>-<commit>`. On GitHub and GitLab Kamerton also opens a pull or merge request and shows its address. The cluster changes after the merge. |
 | `commit` | The change is committed straight to the followed branch and applied within seconds. |
 
-Both writing modes need a token with write access in the Secret. The commit author is `Kamerton`; the file is edited as it is in the repository, so comments and the lines nobody touched stay as they were. Deleting the system in the UI removes its file the same way.
+Both writing modes need a token with write access in the Secret. The commit author is `Kamerton`; the file is edited as it is in the repository, so comments and the lines nobody touched stay as they were. Deleting the system in the UI removes its file the same way. A system created in the UI becomes a new file `<git.path>/<name>.yaml`: with writing on, the repository is where systems are made, and the new system appears in the UI once its file is on the followed branch.
 
 On a hosting service Kamerton does not know, `pullRequest` still pushes the branch; open the request from it by hand. For a self-hosted GitHub or GitLab set `git.provider` (`github` or `gitlab`) and, if the API is not at the usual path, `git.apiURL`.
 
@@ -76,7 +76,15 @@ Without a writing mode, saving or deleting through the API answers `409` with th
 
 One thing stays refused in every mode: the changes Kamerton makes to a description by itself, such as a chat or a mail recipient added on the Channels screen. For a system from git put the receiver into its file.
 
-Systems made in the UI or with `kubectl` are left alone and stay editable. If a file names a system that already exists and did not come from this repository, Kamerton does not take it over: the file is reported as a conflict until one of the two is renamed or the existing system is deleted.
+## Systems that already exist
+
+A system made in the UI or with `kubectl` before git was connected is left alone. It stays editable in the UI and saved to the cluster, whatever the repository holds.
+
+To put such a system under git, use "Move to git" in its menu. Kamerton writes its description to the repository as a new file. The system keeps working as it is; once the file is on the followed branch, the file takes the system over in place. Nothing is deleted and recreated, so its rules never go away. On our test the PrometheusRule of the moved system was the same object before and after.
+
+Putting the file into the repository by hand does not do this. If a file names a system that already exists and did not come from this repository, Kamerton does not take it over: the file is reported as a conflict until one of the two is renamed, the existing system is deleted, or it is moved with "Move to git".
+
+Files may sit in subfolders of `git.path`, for example one folder per team; Kamerton reads the whole tree. One installation follows one repository, one branch and one folder.
 
 ## The rules next to the description
 
