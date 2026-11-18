@@ -39,10 +39,9 @@ Grouping by cause, the follow-up, the incident history, the "Useful" and "Noise"
 
 Found on that installation. Fixed in 0.2.1: a description that named a Telegram or email receiver before its Secret existed lost its whole Alertmanager configuration, so nothing was sent and nothing was muted. Now only that channel is left out, and the description's condition `ChannelsConnected` says which. Since 0.2.2 the UI says it too: on the system's card, on the Channels screen and in the getting-started block.
 
-Still open:
+Also found there and changed after 0.2.2, in the main branch: the first rollout of a workload is now worded "first deployed", not "new version"; alerts that linger after an incident ends are shown as its tail, not as a new incident; the demo instructions wait for the shop to start before describing it.
 
-- right after the demo shop starts, a few error alerts fire for about three minutes while its services come up;
-- on a workload younger than the incident, the evidence lists its first rollout as "new version".
+Still open: the lingering alerts are still sent to the channels once the cause is gone, because Alertmanager stops muting them at that moment.
 
 ## Not done yet, and known limits
 
