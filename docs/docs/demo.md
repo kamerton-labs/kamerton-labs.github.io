@@ -43,9 +43,7 @@ kubectl -n kamerton port-forward svc/kamerton 8080
 
 The UI is at `http://localhost:8080`. Set up Telegram or email under "Channels" - see [Notifications](./notifications) - or replace the placeholder chat ID and addresses in `system.yaml` with your own.
 
-::: warning Do this before step 4
-The shop's description names a Telegram and an email receiver. Until the Secrets `kamerton-telegram` and `kamerton-smtp` exist, the Prometheus Operator rejects the whole Alertmanager configuration of the system: nothing is sent and alerts are not grouped by cause. Connect both channels under "Channels", or delete the receivers you do not use from the description. A known problem of 0.2.0.
-:::
+You can skip the channels at first: a receiver whose Secret does not exist yet is left out, and the alerts still show in the UI, grouped by cause.
 
 ## 4. Break something
 
