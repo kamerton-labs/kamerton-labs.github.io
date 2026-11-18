@@ -39,6 +39,7 @@ Muting alerts by cause needs nothing here: it is generated into each system's Al
 | `incidents.followUp.enabled` | `true` | Alertmanager also sends each notification to Kamerton's webhook, and Kamerton sends the follow-up. `false`: no webhook in the generated routing at all. Needs `controller.enabled`; only descriptions in the release namespace get the webhook. |
 | `incidents.followUp.secretName` | `kamerton-webhook` | Secret with the bearer token Alertmanager sends (key `token`). Kamerton creates it with a random token when it is missing. |
 | `incidents.followUp.workloadRead` | `true` | Read-only access to pods, events, ReplicaSets and StatefulSets in all namespaces, for the "what changed" part. `false` drops these permissions and that part. |
+| `incidents.tailMute` | `10m` | How long the consequences of an incident stay silenced in Alertmanager after its cause is gone. `"0"` turns it off. See [Incidents](./incidents#after-the-cause-is-gone). |
 | `incidents.grafanaExternalURL` | empty | Grafana as people open it, for the link to failing traces. Empty: no link. |
 
 Per system, the follow-up and the "incident over" message are switched in the description: `spec.notifications.evidenceFollowUp` and `spec.notifications.askWhatHelped`.
