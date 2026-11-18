@@ -1,6 +1,6 @@
 # Limitations and status
 
-Version 0.2.1, early. Below: what works, where it was tried and what is missing. We do not promise dates.
+Version 0.2.2, early. Below: what works, where it was tried and what is missing. We do not promise dates.
 
 ## What works
 
@@ -37,7 +37,7 @@ A clean installation of 0.2.0, later upgraded to 0.2.1, on an Ubuntu 24.04 serve
 
 Grouping by cause, the follow-up, the incident history, the "Useful" and "Noise" buttons and the noise statistics are new in 0.2.0. Each was tried on these two clusters and nowhere else yet.
 
-Found on that installation. Fixed in 0.2.1: a description that named a Telegram or email receiver before its Secret existed lost its whole Alertmanager configuration, so nothing was sent and nothing was muted. Now only that channel is left out, and the description's condition `ChannelsConnected` says which.
+Found on that installation. Fixed in 0.2.1: a description that named a Telegram or email receiver before its Secret existed lost its whole Alertmanager configuration, so nothing was sent and nothing was muted. Now only that channel is left out, and the description's condition `ChannelsConnected` says which. Since 0.2.2 the UI says it too: on the system's card, on the Channels screen and in the getting-started block.
 
 Still open:
 

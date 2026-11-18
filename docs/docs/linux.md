@@ -100,7 +100,7 @@ Then open `http://localhost:8080`. For a permanent address put your web server o
 
 Continue with the [Quick start](./quick-start#_5-describe-a-system) from step 5, or install the [demo shop](./demo) to see alerts within minutes.
 
-A description may name a Telegram or email receiver before the channel is connected. Since 0.2.1 that receiver is simply left out until you enter the bot token or the mail server under "Channels"; rules and grouping by cause work meanwhile.
+A description may name a Telegram or email receiver before the channel is connected. Since 0.2.1 that receiver is simply left out until you enter the bot token or the mail server under "Channels"; rules and grouping by cause work meanwhile. Since 0.2.2 the Channels screen and the system's card remind you that the channel is not connected.
 
 ## Remove everything
 
