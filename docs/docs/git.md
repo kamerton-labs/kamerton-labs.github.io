@@ -2,7 +2,7 @@
 
 Kamerton can take system descriptions from a git repository. The repository becomes the place where a system is changed and reviewed; Kamerton follows one branch and applies what is merged there. Nobody runs a command after a merge.
 
-New in 0.3.0. Tried on the k3s test cluster with a repository of one system: adding a service, a broken file, a name clash and a deleted file.
+New in 0.3.0. Tried on the k3s test cluster with a repository of one system: adding a service, a broken file, a name clash, a deleted file, and a change made in the UI that went to a branch, was merged and came back to the cluster.
 
 ## Turn it on
 
@@ -19,6 +19,10 @@ helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-valu
 | `git.path` | empty | A folder in the repository. Empty reads the whole repository. |
 | `git.secretName` | `kamerton-git` | Secret with an access token for a private repository. |
 | `git.interval` | `1m` | How often Kamerton looks at the branch. |
+| `git.write` | empty | What "Save" in the UI does to a system from git: nothing, `pullRequest` or `commit`. |
+| `git.provider`, `git.apiURL` | empty | The hosting service, for a self-hosted GitHub or GitLab. |
+| `git.commitStatus` | `false` | Mark every read commit as applied or not. |
+| `git.generatedPath` | empty | A folder for the generated rules, dashboards and runbooks. |
 
 For a private repository create a read-only token and put it in a Secret:
 
@@ -54,13 +58,92 @@ Within the interval Kamerton sees the new commit, validates every file, generate
 | The repository cannot be read | Nothing changes and nothing is deleted. |
 | A mistyped folder | Nothing changes and nothing is deleted. |
 
-## Systems from git are read-only in the UI
+## Changing a system from git
 
-A system that came from git shows its file and commit, and its Save button is off. Saving or deleting it through the API answers `409` with the code `from_git`. This is deliberate: two places to change one system drift apart.
+There is one place where such a system changes: its file. How the UI takes part is the setting `git.write`.
 
-That includes the things the UI normally writes into a description: a chat or a mail recipient added on the Channels screen, a quieter threshold applied from the rule card. For a system from git make those changes in its file.
+| `git.write` | What "Save" does in the UI |
+| --- | --- |
+| empty (default) | Nothing. The system is read-only, with its file and commit shown. |
+| `pullRequest` | The change is pushed to a new branch `kamerton/<system>-<commit>`. On GitHub and GitLab Kamerton also opens a pull or merge request and shows its address. The cluster changes after the merge. |
+| `commit` | The change is committed straight to the followed branch and applied within seconds. |
+
+Both writing modes need a token with write access in the Secret. The commit author is `Kamerton`; the file is edited as it is in the repository, so comments and the lines nobody touched stay as they were. Deleting the system in the UI removes its file the same way.
+
+On a hosting service Kamerton does not know, `pullRequest` still pushes the branch; open the request from it by hand. For a self-hosted GitHub or GitLab set `git.provider` (`github` or `gitlab`) and, if the API is not at the usual path, `git.apiURL`.
+
+Without a writing mode, saving or deleting through the API answers `409` with the code `from_git`. With one it answers `202` and says where the change went.
+
+One thing stays refused in every mode: the changes Kamerton makes to a description by itself, such as a chat or a mail recipient added on the Channels screen. For a system from git put the receiver into its file.
 
 Systems made in the UI or with `kubectl` are left alone and stay editable. If a file names a system that already exists and did not come from this repository, Kamerton does not take it over: the file is reported as a conflict until one of the two is renamed or the existing system is deleted.
+
+## The rules next to the description
+
+A description changes by a line; the rules it produces may change by dozens. Set `git.generatedPath` to a folder, and every change Kamerton writes also carries what the description generates:
+
+```text
+observability/
+  systems/
+    shop.yaml                     the description, edited by people
+  generated/
+    shop/
+      rules/shop.rules.yaml       written by Kamerton
+      dashboards/
+      runbooks/
+```
+
+The review then shows both: the line that changed and the rules it changes. On our test, raising one threshold from 2% to 3% was one line in the description and twelve in the rules.
+
+The layout is that of `kamerton generate -o`, so a change made by hand can refresh the folder with the same command:
+
+```sh
+kamerton generate -f systems/shop.yaml -o generated/shop
+```
+
+## A check in CI
+
+`kamerton diff` says in words what a change of a description does to the rules:
+
+```sh
+kamerton diff -f systems/shop.yaml --against old/shop.yaml
+```
+
+```text
+System shop: 2 changed, 0 added, 0 removed (26 rules after).
+
+Changed
+- cart · KamertonErrorRateHigh: threshold 5% -> 2%; for 1m -> 3m
+- cart · KamertonOperationErrorRateHigh: threshold 5% -> 2%; for 1m -> 3m
+```
+
+It needs no cluster. A GitHub Actions job that validates every description of a pull request and prints the difference from the target branch:
+
+```yaml
+name: observability
+on:
+  pull_request:
+    paths: ['systems/**']
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    container: ghcr.io/kamerton-labs/kamerton:0.3.0
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: |
+          for f in systems/*.yaml; do
+            kamerton validate -f "$f"
+            git show "origin/${{ github.base_ref }}:$f" > /tmp/before.yaml 2>/dev/null || rm -f /tmp/before.yaml
+            kamerton diff -f "$f" --against /tmp/before.yaml >> "$GITHUB_STEP_SUMMARY"
+          done
+```
+
+We have not run this job on GitHub ourselves; the commands in it are the tested part.
+
+## A mark on the commit
+
+With `git.commitStatus: true` Kamerton marks every commit it reads on GitHub or GitLab, like a build system does: green with the number of systems applied, red with the file and the error. The token must be allowed to set commit statuses.
 
 ## Where to look
 
@@ -72,7 +155,8 @@ The commit on a system is the one that last changed its file, not the tip of the
 
 ## Limits
 
-- Kamerton reads; it does not write. A change made in the UI is not turned into a commit or a pull request yet.
+- Pull and merge requests and commit statuses work on GitHub and GitLab. Elsewhere Kamerton pushes the branch and you open the request.
+- Writing was tried against a plain git server and a stand-in for the hosting API, not against github.com or gitlab.com.
 - One repository, one branch, one folder per installation.
 - http(s) only, with an optional token. No SSH keys, no commit signature checks.
 - Only in a cluster with the controller on.
