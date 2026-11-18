@@ -18,7 +18,11 @@ The repository's address, its branch and a token. Kamerton reads the repository 
 
 ## Open a project
 
-On your machine the first screen also lists the projects opened before and takes any folder with a project file, or a folder of description files from before project files existed. On start Kamerton opens the project opened last. "Close project" on the project page goes back to the first screen; the folder stays as it is.
+On your machine the first screen also lists the projects opened before and takes any folder with a project file, or a folder of description files from before project files existed. On start Kamerton opens the project opened last, unless it was closed by hand. "Close project" on the project page goes back to the first screen; the folder stays as it is.
+
+## Rename a project
+
+"Rename" next to the name on the project page. On your machine it changes `metadata.name` in `kamerton.yaml` and nothing else in the file, comments included; in a cluster it changes the kept name. With a repository connected the name is the one in the repository's project file: change it there, like any other file.
 
 `--description` still opens a project at start: a project folder, or description files and folders as before.
 
