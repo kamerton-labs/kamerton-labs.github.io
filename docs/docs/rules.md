@@ -59,9 +59,12 @@ Factor: `latency.aboveNormalFactor`. Switch off: `latency.aboveNormalFactor: 0`.
 | | |
 | --- | --- |
 | Fires | at or below 10% of normal (`threshold: 0.1`), when normal is above 0.02 calls per second (about one a minute), holds 2 min |
-| Stays silent | with less than an hour of history; while data is missing for most services of the system at once - then the telemetry pipeline has stopped, not the service |
+| No calls at all | count only at hours when the service had calls in every 10 minutes of the two hours around the same time a week ago (a day ago in its first week). The rule keeps firing when the series vanish |
+| Stays silent | with less than an hour of history; a complete stop needs a day of history; while data is missing for most services of the system at once - then the telemetry pipeline has stopped, not the service |
 | Default | on for critical `http` and `grpc` services; queues and databases get it only when set on the service |
 | Fields | `trafficDrop.enabled`, `threshold`, `minRequestsPerSecond`, `for`, `severity` |
+
+A critical service that stops completely gets one notification, about 4 minutes after its last call: while this rule covers the stop, the service's "no data" alert stays silent.
 
 ## Pod resources
 
@@ -101,6 +104,19 @@ Switch off: `saturation.oomKilledEnabled: false`.
 
 All resource rules switch off together with `saturation.enabled: false`.
 
+### No ready pods
+
+`KamertonNoReadyPods`. Pods of the service exist and none of them is ready, or the last pod is gone. Read from kube-state-metrics (`kube_pod_status_ready`), with pods found by the service's `workload`.
+
+| | |
+| --- | --- |
+| Fires | holds 30 seconds, so a service scaled to zero is reported within about a minute, before its callers' alerts |
+| No pod left | fires only within an hour of the last ready pod: a deliberate scale to zero cannot be told from a failure, so a service kept at zero stops alerting after that |
+| Severity | critical for critical services, warning for others |
+| Fields | `noReadyPods.enabled`, `for`, `severity`, `message`; metric `telemetry.containers.readyMetric` |
+
+It is a cause for the [grouping by cause](./incidents#muting-by-cause): while it fires, the error, latency and SLO alerts of the services that call this one are muted. `saturation.enabled: false` does not switch it off.
+
 ## Queues
 
 ### Queue lag
@@ -112,6 +128,32 @@ All resource rules switch off together with `saturation.enabled: false`.
 `KamertonQueueConsumerStopped`. A consumer group of the topic has had no members for 1 minute, or its lag stayed above zero for 3 minutes while its committed offset did not move. Works at any traffic, needs no threshold. Holds 1 minute, same severity as the lag rule. On by default.
 
 Switch off: `queue.consumerStoppedEnabled: false`. Metrics: `telemetry.queues.membersMetric` and `offsetMetric`.
+
+## No data
+
+Every other rule is an expression over span metrics. With no samples it returns nothing, so if the Collector stops writing to Prometheus, those rules go quiet. These two catch that.
+
+"No data" here means "this normally has traffic now, and nothing arrives". Both rules fire only at hours when the service (or the system) had calls in every 10 minutes of the two hours around the same time a week ago, averaging above `trafficDrop.minRequestsPerSecond`. In the first week, yesterday decides. An idle test cluster at night or a batch service on a weekend never reports missing data, and nothing fires in the first day after a service starts sending.
+
+### No data from the service
+
+`KamertonServiceTelemetryMissing`. For `http` and `grpc` services: the service sent span metrics in the last day, has sent none for 3 minutes, and other services of the system still send. Holds 1 minute.
+
+| | |
+| --- | --- |
+| Severity | the severity of the service's "requests stopped" rule where that rule is on, otherwise warning |
+| Stays silent | for a service that never sent data; for one silent for a day (renamed, removed); while "requests stopped" covers the stop |
+| Fields | `noData.enabled`, `after` (default `3m`), `severity`, `message`, in `defaults` or on the service |
+
+It needs the series of a silent service to disappear. The bundled Collector sets `metrics_expiration: 2m` for that; a Collector of your own needs the same, or this rule can never fire. A service is then reported about 6 minutes after its last span.
+
+### Kamerton cannot see the system
+
+`KamertonTelemetryMissing`. Critical, one per system: none of the system's services has sent span metrics for 3 minutes, although some did in the last day. The Collector, remote write or Prometheus is broken. The message says that no other alert of the system can fire until data returns. While it fires, the per-service "no data" alerts are muted.
+
+Fields: `spec.noData.enabled`, `spec.noData.after`, `spec.noData.message`. It has its own runbook page, `_system`.
+
+If Prometheus keeps less than about a day of data, nothing is ever expected, and neither "no data" rule can fire.
 
 ## Availability objective (SLO)
 
@@ -131,4 +173,12 @@ Any condition on any Prometheus metric: assembled from parts (metric, function, 
 
 ## Rules with a "normal"
 
-Rules that compare a service with its normal behaviour stay silent until there is enough history: a new service, the first hour after a gap in the data.
+Rules that compare a service with its normal behaviour stay silent until there is enough history: a new service, the first hour after a gap in the data. The "no data" rules and the complete-stop case of "requests stopped" need a day. Right after installation that means the first day is not covered.
+
+## Starved services
+
+When a service fails, the services it calls and the consumers of a queue it writes to lose their traffic. Their "no data" and "requests stopped" alerts then get the label `kamerton_starved="true"` and are muted while the feeder's alert fires. See [Incidents](./incidents#starved-services).
+
+## How noisy a rule is
+
+The rule card counts how often the rule fired over the last days, how many firings cleared by themselves within 5 minutes, and suggests a quieter threshold or pending period for a noisy rule. See [Quieter rules](./quieter-rules).

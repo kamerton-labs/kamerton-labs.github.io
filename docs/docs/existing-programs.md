@@ -65,5 +65,8 @@ These addresses become the built-in set. Requirements and caveats:
 - If your operator's `ruleSelector` or `alertmanagerConfigSelector` needs labels, set them on the set on the status page.
 - The bundled Collector and Grafana are pre-wired to the bundled Prometheus (`opentelemetry-collector.config.exporters.prometheusremotewrite.endpoint`, `grafana.datasources`). Point them at yours or disable them: `opentelemetry-collector.enabled=false`, `grafana.enabled=false`.
 - `bringYourOwn.grafana` (`enabled`, `url`) works the same way for Grafana. Dashboards are delivered as ConfigMaps, so your Grafana needs the dashboard sidecar.
+- For the [grouping by cause](./incidents#muting-by-cause) your Alertmanager resource needs `alertmanagerConfigMatcherStrategy: None`. Span-metric alerts carry no `namespace` label, and the operator would otherwise add a namespace matcher to Kamerton's routes.
+- A Collector of your own needs the spanmetrics connector with `namespace: traces.span.metrics` (or matching `spec.telemetry` names) and `metrics_expiration`, for example `2m`. Without it a silent service keeps flat series forever, and its "no data" alert can never fire.
+- The bundled Prometheus accepts samples up to 30 minutes late (`tsdb.outOfOrderTimeWindow: 30m`). Without that, one late sample makes Prometheus reject the Collector's whole write request.
 
 All chart values: [Configuration](./configuration).

@@ -19,6 +19,7 @@ The Kamerton Helm chart installs these programs as dependencies, from their upst
 | Grafana | AGPL-3.0 | grafana (grafana-community) |
 | Loki | AGPL-3.0 | loki (grafana-community) |
 | Tempo | AGPL-3.0 | tempo (grafana-community) |
+| OpenTelemetry eBPF Instrumentation (OBI) | Apache-2.0 | opentelemetry-ebpf-instrumentation (open-telemetry), optional, off by default (`autoInstrument.enabled`) |
 
 Chart versions are pinned in `deploy/helm/kamerton/Chart.yaml`. The upstream charts may install further components (for example kube-state-metrics and node-exporter in kube-prometheus-stack); see each chart for its contents and licences.
 

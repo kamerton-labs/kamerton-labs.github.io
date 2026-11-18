@@ -19,7 +19,7 @@ spec:
       type: grpc
 ```
 
-From these lines Kamerton generates rules for both services: errors, latency, requests stopped arriving, memory and restarts. Default thresholds can be changed for the whole system or for one service.
+From these lines Kamerton generates rules for both services: errors, latency, memory, restarts, no ready pods and no data. `checkout` is critical, so it also gets "requests stopped arriving". And because `checkout` depends on `payment`, an error alert of `checkout` is muted while an alert of `payment` itself is firing. Default thresholds can be changed for the whole system or for one service.
 
 There can be several systems, each with its own document. Telegram and email channels are shared by all systems; receivers and routes belong to each system.
 
@@ -31,8 +31,9 @@ There can be several systems, each with its own document. Telegram and email cha
 | `stack` | The set of programs the system uses. Empty: the built-in set. See [Programs you already run](./existing-programs). |
 | `telemetry` | Metric and label names in your Prometheus. Defaults follow the OpenTelemetry span metrics connector and cAdvisor. |
 | `defaults` | Policies for every service: namespace, window, thresholds. |
+| `noData` | The alert for the whole system going silent: `enabled`, `after`, `message`. See [Rule library](./rules#kamerton-cannot-see-the-system). |
 | `services` | The services of the system. At least one. |
-| `notifications` | Receivers, routes, language and time zone of messages. See [Notifications](./notifications). |
+| `notifications` | Receivers, routes, language and time zone of messages, and the switches for [incidents](./incidents#switches). See [Notifications](./notifications). |
 
 ## A service
 
@@ -43,9 +44,10 @@ There can be several systems, each with its own document. Telegram and email cha
 | `critical` | Critical services page on call; others create warnings. |
 | `description`, `owner` | Short description and who is responsible. The description shows in the UI and in notifications. |
 | `telemetryName` | The service name in telemetry, if it differs from `name`. |
-| `dependsOn` | Services this service calls. Used for the canvas and to find the probable source of an incident. |
-| `workload` | Where the pods run: `namespace` and `podRegex`. |
+| `dependsOn` | Services this service calls. Used for the canvas, to find the probable cause of an incident and to mute the alerts that are only its consequences. |
+| `workload` | Where the pods run: `namespace` and `podRegex`. The "no ready pods" rule and the "what changed" part of the [follow-up](./incidents#the-follow-up-message) look there. |
 | `errorRate`, `latency`, `saturation`, `trafficDrop` | Own thresholds instead of the defaults. |
+| `noReadyPods`, `noData` | The "no ready pods" and "no data" rules of this service: on or off, timing, severity, text. |
 | `operations` | Operations with their own error and latency thresholds. |
 | `excludeOperations` | Operations the rules ignore (RE2 regular expressions). |
 | `queue` | For `queue` services: topic, consumer groups, allowed lag. |

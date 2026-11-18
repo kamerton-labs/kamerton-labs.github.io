@@ -73,9 +73,22 @@ The format: [Describe a system](./describe-system).
 
 Open "Channels" in the menu, paste the bot token or the mail server settings, add recipients. Details: [Notifications](./notifications).
 
+The follow-up message after an alert needs no setup: it uses the same bot and mail server. The link to failing traces in it needs Grafana's address as people open it, `--set incidents.grafanaExternalURL=...`.
+
+## 7. Services that send no traces (optional)
+
+Kamerton's rules read span metrics, which come from traces. For services without OpenTelemetry the chart can install an eBPF agent that sees their HTTP and gRPC calls. It is off by default and runs privileged on every node. Read [Services without OpenTelemetry](./configuration#services-without-opentelemetry) first, then:
+
+```sh
+helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reuse-values \
+  --set autoInstrument.enabled=true \
+  --set 'autoInstrument.namespaces.include={shop}'
+```
+
 ## Next
 
 - [Demo shop](./demo): Kamerton next to the OpenTelemetry Demo, switchable faults and a first alert.
+- [Incidents](./incidents): what happens when a service fails, and the message that follows the alert.
 - [Programs you already run](./existing-programs): your own Prometheus instead of the bundled one, several sets of programs.
 - [Limitations and status](./limitations): what is not done yet.
 

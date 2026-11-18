@@ -8,7 +8,7 @@ The screenshots were taken from the real UI run locally without a cluster and wi
 
 The list of systems with their state: number of services, rules and channels, and whether anything is firing. The "Getting started" block shows what is not done yet: connect Prometheus, find services, create rules, connect a channel. "Add system" creates a new description.
 
-<Shot name="systems" alt="Systems screen: a four-step getting-started block and the otel-demo system card - 16 services, 164 rules, 2 channels" />
+<Shot name="systems" alt="Systems screen: a four-step getting-started block and the otel-demo system card with its counts of services, rules and channels" />
 
 ## Diagram
 
@@ -24,7 +24,10 @@ A table of all the system's rules with filters by service, kind of check and sta
 
 - the threshold, how long the condition must hold, and the severity;
 - a backtest over a day, 3 or 7 days - how many times the rule would have fired;
-- the team's own notification text with a preview.
+- the team's own notification text with a preview;
+- "How often it fires": real firings over the last days, how many cleared by themselves, a quieter value for a noisy rule, and the "Useful" and "Noise" buttons. See [Quieter rules](./quieter-rules).
+
+A noisy rule has a "noisy" mark in the table, and the "Noisy" filter shows only those.
 
 "Create rule" adds a rule from the library or a custom one.
 
@@ -48,11 +51,15 @@ Telegram and email setup: the bot token or mail server password is entered here 
 
 ## Alerts
 
-What is firing now across all systems: a title, value, threshold and the probable source. Kamerton walks the `dependsOn` graph and shows the chain of affected services. Without a connected Alertmanager this screen is empty, so there is no screenshot here.
+What is firing now across all systems, grouped into incidents. An incident names its cause ("Cause: payment is failing, and the services that call it fail with it."), lists the affected services and says which of their alerts were not sent because they were muted. Below it is the evidence of the follow-up: what changed, the operation with most errors, a log line, a link to failing traces. If the same service failed before, the last time is shown with its notes.
+
+The "History" view lists past incidents, newest first, with their duration. Each one can get a note: the cause and what helped. Notes written in reply to the "incident over" message in Telegram show up here too. See [Incidents](./incidents).
+
+Without a connected Alertmanager this screen is empty, so there is no screenshot here.
 
 ## Runbooks
 
-Every service has a runbook page for the person on call: a stub Kamerton generates, or your own `runbookURL`. Links in notifications lead there.
+Every service has a runbook page for the person on call: a stub Kamerton generates, or your own `runbookURL`. Links in notifications lead there. Under "What helped before" the page lists the last notes about incidents of this service. Alerts about the whole system have a runbook page of their own, `_system`.
 
 ## Kamerton status
 

@@ -12,6 +12,8 @@ Channels are shared by all systems. What each system sends to which chat or addr
 2. Add the bot to your groups. The core polls Telegram and lists the chats within seconds. Chats the bot is removed from are marked unavailable. A group upgraded to a supergroup is followed to its new ID, including receivers in the description.
 3. Send a test message, choose severities (and optionally services) for the chat, and save. Receivers and routes are written into the system description and the controller regenerates the AlertmanagerConfig.
 
+The same polling picks up presses of the "Useful" and "Noise" buttons under follow-up messages and replies to "incident over" messages. Both count only from chats that get the system's alerts.
+
 **Telegram's limits.** Telegram keeps updates for 24 hours and has no "list my chats" call. A chat the bot joined long before Kamerton started does not appear by itself: check it by ID on the same screen, or re-add the bot. A bot may have only one update consumer and no webhook - use a dedicated bot for Kamerton.
 
 ## Email
@@ -74,6 +76,21 @@ Kamerton uses its own message templates for Telegram and email instead of Alertm
 
 Grouped alerts are listed compactly: at most 8, then a count.
 
+Alerts about the whole system, such as "Kamerton cannot see the system", have no service, and the message leaves it out.
+
+## The second message
+
+About 45 seconds after an alert Kamerton itself sends one short message to the same chats and addresses: the probable cause, the services also affected, what changed in the workload, the operation with most errors, a log line and a link to failing traces. When the incident is over, Telegram chats get one more message asking what helped. Both go only through the bot and mail server set up on the Channels screen, and only for descriptions in Kamerton's namespace.
+
+```text
+🔎 Probable cause · otel-demo (demo)
+Probable cause: payment (payment: No ready pods since 16:50 UTC).
+Also affected: checkout, frontend.
+What changed in payment in the last 30 min: payment scaled from 1 to 0 replicas at 16:50 UTC; no pods exist.
+```
+
+What it contains and how to turn it off: [Incidents](./incidents).
+
 ## Language and time zone
 
 Messages are in English by default. `spec.notifications.language: ru` switches the message text to Russian; the same choice is the "Message language" control in the "Where to send alerts" panel on the canvas. The `summary` and `description` annotations of the rules stay in English.
@@ -108,4 +125,4 @@ Placeholders are a fixed list:
 
 Other braces and any markup are rejected by validation: the text is shown as written. Values are escaped.
 
-Where the text goes: `message` on the error, latency, requests-stopped, queue, SLO and custom rules; `memoryMessage`, `cpuMessage`, `oomKilledMessage`, `restartsMessage` on the resource rules; `consumerStoppedMessage` on the "nobody reads the queue" rule.
+Where the text goes: `message` on the error, latency, requests-stopped, queue, SLO, no-ready-pods, no-data and custom rules; `memoryMessage`, `cpuMessage`, `oomKilledMessage`, `restartsMessage` on the resource rules; `consumerStoppedMessage` on the "nobody reads the queue" rule.
