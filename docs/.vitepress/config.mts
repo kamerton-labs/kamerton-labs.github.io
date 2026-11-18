@@ -18,6 +18,7 @@ function sidebar(): DefaultTheme.SidebarItem[] {
       text: 'Using Kamerton',
       items: [
         { text: 'Describe a system', link: '/docs/describe-system' },
+        { text: 'Descriptions in git', link: '/docs/git' },
         { text: 'Rule library', link: '/docs/rules' },
         { text: 'Notifications', link: '/docs/notifications' },
         { text: 'Incidents', link: '/docs/incidents' },
