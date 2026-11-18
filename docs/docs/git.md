@@ -9,7 +9,7 @@ New in 0.3.0. Tried on the k3s test cluster with a repository of one system: add
 Open "Project" in the sidebar; git is a block on that page. The form has two modes.
 
 - **Open**: the repository already holds a project. Enter its address and press "Test": Kamerton reads the repository and says what it found, without storing anything. "Connect" then starts following it.
-- **Create**: start a project. Kamerton writes the project file, a README and a `.gitignore` into the folder you name, `observability` by default, and leaves everything else in the repository alone. It works in an empty repository (leave the folder empty to use its root) and in one that already has code. With pull requests on, the new project arrives as a pull request. Creating needs a token with write access and push turned on.
+- **Create**: start a project. Kamerton writes the project file, a README and a `.gitignore` into the folder you name, `observability` by default, and leaves everything else in the repository alone. It works in an empty repository (leave the folder empty to use its root) and in one that already has code. The project goes straight to the followed branch, so systems can be pushed at once; only when the branch refuses a push does it arrive as a pull request, and systems then wait for its merge. Creating needs a token with write access and push turned on.
 
 | Field | Meaning |
 | --- | --- |
@@ -71,6 +71,8 @@ spec:
 
 Kamerton reads `.yaml` and `.yml` files whose `kind` is `SystemDescription`. Other YAML in the same folders, such as Helm values or CI files, is ignored. The format is the one in [Describe a system](./describe-system); `kamerton validate -f systems/shop.yaml` checks a file before you commit it.
 
+The project file is the mark of a project: it is in the project's root and nowhere else, and Kamerton treats a folder as a project only when it finds one there. A new project also has an empty `systems` folder, so the place for the first system is visible.
+
 A mistyped field in the project file is an error: nothing is read and nothing changes until it is fixed. Without a project file the installation's settings lay the repository out, `git.path` being the folder of systems and `git.generatedPath` the folder of generated files.
 
 ### Starting from an empty repository
@@ -106,7 +108,9 @@ Saving a system from git does not touch the repository or the cluster. The chang
 
 "Discard" forgets a saved change. Saving the repository's own content again leaves nothing to push. With login on, the person's name goes into the commit.
 
-A system created in the UI is pushed as a new file `<systems>/<name>.yaml`; it appears in the UI once its file is on the followed branch. Until then it is listed under the changes to push and cannot be opened.
+A system created in the UI opens at once as a draft: it is on the Systems screen with a "draft, not pushed" mark, and can be drawn, edited and deleted like any other. It runs nothing until it is pushed, as a new file `<systems>/<name>.yaml`, and that file is on the followed branch.
+
+Each change to push has "Diff": the description file line by line, removed lines and added lines. A commit in the list opens the same way: for every description file it touched, what happened to the rules and the diff of the text.
 
 On a hosting service Kamerton does not know, the branch is pushed and you open the request by hand. For a self-hosted GitHub or GitLab set the provider in the installation's settings.
 
