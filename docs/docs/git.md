@@ -32,18 +32,45 @@ kubectl -n kamerton create secret generic kamerton-git --from-literal=token='<to
 
 GitHub, GitLab and Gitea take such a token as the password of HTTP basic auth, and that is how Kamerton sends it. SSH keys are not supported yet.
 
-## What goes in the repository
+## The project
 
-Description files, one system per file, anywhere under the folder:
+A repository connected to Kamerton is a project: the systems, and next to them what they generate. A small file at its root, `kamerton.yaml`, says where things are, so the repository describes itself. Moving a project to another cluster then needs its address and nothing else.
 
 ```text
 observability/
-  systems/
+  kamerton.yaml         the project file
+  systems/              one system per file; subfolders are fine
     shop.yaml
-    billing.yaml
+    team-a/billing.yaml
+  generated/            rules, dashboards and runbooks; written by Kamerton
+  drafts/               not read
+  README.md
+  .gitignore
 ```
 
-Kamerton reads `.yaml` and `.yml` files whose `kind` is `SystemDescription`. Other YAML in the same folder, such as Helm values or CI files, is ignored. The format is the one in [Describe a system](./describe-system); `bin/kamerton validate -f shop.yaml` checks a file before you commit it.
+```yaml
+apiVersion: kamerton.dev/v1alpha1
+kind: Project
+metadata:
+  name: observability
+spec:
+  systems: systems        # default
+  generated: generated    # default; "" keeps generated files out of the repository
+  ignore:                 # folders and files Kamerton does not read
+    - drafts
+```
+
+`generated` is to `systems` what a build output is to source code: produced from it, never edited by hand, safe to delete and make again. It is committed on purpose, like a lock file, so a review shows what a change of a description really does.
+
+Kamerton reads `.yaml` and `.yml` files whose `kind` is `SystemDescription`. Other YAML in the same folders, such as Helm values or CI files, is ignored. The format is the one in [Describe a system](./describe-system); `kamerton validate -f systems/shop.yaml` checks a file before you commit it.
+
+A mistyped field in the project file is an error: nothing is read and nothing changes until it is fixed. Without a project file the installation's settings lay the repository out, `git.path` being the folder of systems and `git.generatedPath` the folder of generated files.
+
+### Starting from an empty repository
+
+Create an empty repository, connect it with `git.write` set, and add the first system in the UI. Kamerton makes the first commit: the system, its generated files, the project file above, a README that explains the layout and a `.gitignore`. The first commit goes straight to the followed branch even in pull-request mode, because there is nothing to open a request into yet. We tried this against a new private repository on github.com.
+
+Kamerton never writes secrets, incident history or addresses of your Prometheus to the repository. The `.gitignore` is there for people working by hand.
 
 ## What happens after a merge
 
@@ -88,7 +115,7 @@ Files may sit in subfolders of `git.path`, for example one folder per team; Kame
 
 ## The rules next to the description
 
-A description changes by a line; the rules it produces may change by dozens. Set `git.generatedPath` to a folder, and every change Kamerton writes also carries what the description generates:
+A description changes by a line; the rules it produces may change by dozens. With a `generated` folder in the project file (or `git.generatedPath` without one), every change Kamerton writes also carries what the description generates:
 
 ```text
 observability/
@@ -108,6 +135,12 @@ The layout is that of `kamerton generate -o`, so a change made by hand can refre
 ```sh
 kamerton generate -f systems/shop.yaml -o generated/shop
 ```
+
+## In the UI
+
+Before a change goes to the repository, a dialog shows the file, the branch and the repository, says in words which rules the change affects ("cart · KamertonErrorRateHigh: threshold 2% -> 4%") and takes the commit message. With login on, the person's name goes into the commit.
+
+The Systems screen names the project, links to the repository and the applied commit, has "Check now" for when a minute is too long, and lists the open pull or merge requests Kamerton made. A system with an open request says so.
 
 ## A check in CI
 
@@ -166,7 +199,7 @@ The commit on a system is the one that last changed its file, not the tip of the
 ## Limits
 
 - Pull and merge requests and commit statuses work on GitHub and GitLab. Elsewhere Kamerton pushes the branch and you open the request.
-- Writing was tried against a plain git server and a stand-in for the hosting API, not against github.com or gitlab.com.
+- Writing was tried against github.com (a private repository: pull request, merge, commit statuses, an empty repository) and against a plain git server. GitLab was tried only against a stand-in for its API.
 - One repository, one branch, one folder per installation.
 - http(s) only, with an optional token. No SSH keys, no commit signature checks.
 - Only in a cluster with the controller on.
