@@ -50,7 +50,7 @@ Right after installation the UI and API are open to anyone who can reach them. T
 ```sh
 kubectl -n kamerton create secret generic kamerton-auth \
   --from-literal=username=admin --from-literal=password='<strong password>'
-helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reuse-values \
+helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-values \
   --set auth.existingSecret=kamerton-auth
 ```
 
@@ -80,10 +80,19 @@ The follow-up message after an alert needs no setup: it uses the same bot and ma
 Kamerton's rules read span metrics, which come from traces. For services without OpenTelemetry the chart can install an eBPF agent that sees their HTTP and gRPC calls. It is off by default and runs privileged on every node. Read [Services without OpenTelemetry](./configuration#services-without-opentelemetry) first, then:
 
 ```sh
-helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reuse-values \
+helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-values \
   --set autoInstrument.enabled=true \
   --set 'autoInstrument.namespaces.include={shop}'
 ```
+
+## Upgrade
+
+```sh
+git pull
+helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-values
+```
+
+`--reset-then-reuse-values` keeps the values you set and takes the defaults of new settings from the new chart. Plain `--reuse-values` does not know the new settings; with 0.2.3 that left the new pod crashing. Needs Helm 3.14 or newer.
 
 ## Next
 
