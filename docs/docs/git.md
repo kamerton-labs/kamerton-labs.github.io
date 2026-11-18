@@ -6,16 +6,20 @@ New in 0.3.0. Tried on the k3s test cluster with a repository of one system: add
 
 ## Connect a repository
 
-Open "Project" in the sidebar; git is a block on that page. The form has two modes.
+A new installation opens on its first screen, "Project", without the sidebar (see [Projects](./projects)). Its right half, "Clone from git", is where a repository is connected at the start; later it is a block on the "Project" page in the sidebar. An installation that already has systems never sees the first screen.
 
-- **Open**: the repository already holds a project. Enter its address and press "Test": Kamerton reads the repository and says what it found, without storing anything. "Connect" then starts following it.
-- **Create**: start a project. Kamerton writes the project file, a README and a `.gitignore` into the folder you name, `observability` by default, and leaves everything else in the repository alone. It works in an empty repository (leave the folder empty to use its root) and in one that already has code. The project goes straight to the followed branch, so systems can be pushed at once; only when the branch refuses a push does it arrive as a pull request, and systems then wait for its merge. Creating needs a token with write access and push turned on.
+Enter the address and press "Test". Kamerton reads the repository without storing anything and offers the one thing that fits:
+
+- **Open project**: the folder already holds a project, or description files without one. Kamerton starts following it as it is.
+- **Create project**: the repository is empty, or the folder has nothing of Kamerton's. Kamerton makes the first commit at once: the project file, a README, a `.gitignore` and an empty `systems` folder, at the root of the repository or in the folder named under "More", with the name you give it. Everything else in the repository is left alone, and a README or `.gitignore` already there stays as it is. The commit goes straight to the followed branch, so systems can be pushed at once; only when the branch refuses a push does it arrive as a pull request, and systems then wait for its merge.
+
+Creating needs a token with write access, and so does push in any mode: "Test" says so when the token is missing, and the button stays off until there is one. An empty repository cannot be opened, only created in. If creating fails, nothing stays connected.
 
 | Field | Meaning |
 | --- | --- |
 | Repository | https address, without credentials. |
 | Branch | The branch to follow; `main` by default. |
-| Folder | The project's root in the repository. Empty: the repository itself. |
+| Folder | The project's root in the repository. Empty, the default: the root of the repository. |
 | Token | For a private repository, and for push. Kept in the Secret `kamerton-git`, never shown again. |
 | Push | Off (read only), Pull request, or straight to the branch. |
 

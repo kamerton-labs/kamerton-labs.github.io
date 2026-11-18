@@ -140,7 +140,7 @@ Needed when running without Helm, for example locally. Every flag has a `KAMERTO
 
 | Flag | What it sets |
 | --- | --- |
-| `--description` | Comma-separated description files or a directory (new systems are created there). Local mode. |
+| `--description` | A project folder (with `kamerton.yaml`), or comma-separated description files or a directory (new systems are created there). Local mode. Without it the project opened last is opened, or the UI shows the first screen. |
 | `--listen-address` | UI and API address, default `:8080`. |
 | `--prometheus-url`, `--alertmanager-url`, `--grafana-url` | Program addresses. Without them discovery, backtest, alerts and program status say "not configured". |
 | `--loki-url`, `--tempo-url`, `--otel-collector-health-url` | Addresses for the status page. |
