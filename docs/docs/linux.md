@@ -2,7 +2,7 @@
 
 A short path from a plain Linux server to a running Kamerton. Kamerton itself runs in Kubernetes, so the first step is a small single-node cluster on the server.
 
-This is what we ran: Kamerton 0.2.0 with the demo shop on one Ubuntu 24.04 server that was already busy with nginx and Docker workloads.
+This is what we ran: Kamerton 0.2.0, then 0.2.1, with the demo shop on one Ubuntu 24.04 server that was already busy with nginx and Docker workloads.
 
 ## What it takes
 
@@ -100,9 +100,7 @@ Then open `http://localhost:8080`. For a permanent address put your web server o
 
 Continue with the [Quick start](./quick-start#_5-describe-a-system) from step 5, or install the [demo shop](./demo) to see alerts within minutes.
 
-::: warning Connect the channels a description names
-A description that names a Telegram or email receiver refers to the Secrets `kamerton-telegram` and `kamerton-smtp`. Until they exist, the Prometheus Operator rejects the whole Alertmanager configuration of that system: nothing is sent, and alerts are not grouped by cause. Enter the bot token and the mail server under "Channels", or remove the receivers you do not use. This is a known problem of 0.2.0.
-:::
+A description may name a Telegram or email receiver before the channel is connected. Since 0.2.1 that receiver is simply left out until you enter the bot token or the mail server under "Channels"; rules and grouping by cause work meanwhile.
 
 ## Remove everything
 

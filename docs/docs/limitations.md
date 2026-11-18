@@ -1,6 +1,6 @@
 # Limitations and status
 
-Version 0.2.0, early. Below: what works, where it was tried and what is missing. We do not promise dates.
+Version 0.2.1, early. Below: what works, where it was tried and what is missing. We do not promise dates.
 
 ## What works
 
@@ -29,7 +29,7 @@ A single-node k3s cluster with the OpenTelemetry Demo:
 - sets of programs work, including finding installed programs and a second Prometheus;
 - eBPF auto-instrumentation records the demo's services when it runs privileged.
 
-A clean installation of 0.2.0 on an Ubuntu 24.04 server, k3s inside Docker, following [On a Linux server](./linux):
+A clean installation of 0.2.0, later upgraded to 0.2.1, on an Ubuntu 24.04 server, k3s inside Docker, following [On a Linux server](./linux):
 
 - the chart installs from the published image, all pods run within a minute;
 - the demo description produces its 195 rules;
@@ -37,9 +37,10 @@ A clean installation of 0.2.0 on an Ubuntu 24.04 server, k3s inside Docker, foll
 
 Grouping by cause, the follow-up, the incident history, the "Useful" and "Noise" buttons and the noise statistics are new in 0.2.0. Each was tried on these two clusters and nowhere else yet.
 
-Found on that installation and not fixed in 0.2.0:
+Found on that installation. Fixed in 0.2.1: a description that named a Telegram or email receiver before its Secret existed lost its whole Alertmanager configuration, so nothing was sent and nothing was muted. Now only that channel is left out, and the description's condition `ChannelsConnected` says which.
 
-- a description that names a Telegram or email receiver before its Secret exists gets its whole Alertmanager configuration rejected by the Prometheus Operator: nothing is sent and nothing is muted until the channel is connected or the receiver removed;
+Still open:
+
 - right after the demo shop starts, a few error alerts fire for about three minutes while its services come up;
 - on a workload younger than the incident, the evidence lists its first rollout as "new version".
 
