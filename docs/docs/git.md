@@ -127,19 +127,21 @@ on:
 jobs:
   rules:
     runs-on: ubuntu-latest
-    container: ghcr.io/kamerton-labs/kamerton:0.3.0
+    env:
+      IMAGE: ghcr.io/kamerton-labs/kamerton:0.3.0
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
       - run: |
+          kamerton() { docker run --rm -v "$PWD:/w" -w /w "$IMAGE" "$@"; }
           for f in systems/*.yaml; do
             kamerton validate -f "$f"
-            git show "origin/${{ github.base_ref }}:$f" > /tmp/before.yaml 2>/dev/null || rm -f /tmp/before.yaml
-            kamerton diff -f "$f" --against /tmp/before.yaml >> "$GITHUB_STEP_SUMMARY"
+            git show "origin/${{ github.base_ref }}:$f" > .before.yaml 2>/dev/null || rm -f .before.yaml
+            kamerton diff -f "$f" --against .before.yaml >> "$GITHUB_STEP_SUMMARY"
           done
 ```
 
-We have not run this job on GitHub ourselves; the commands in it are the tested part.
+The image has no shell, so it is run with `docker run`, not as the job's container. We ran these commands with the image on a laptop; the job itself has not run on GitHub.
 
 ## A mark on the commit
 
