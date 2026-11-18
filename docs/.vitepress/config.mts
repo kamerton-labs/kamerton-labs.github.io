@@ -19,6 +19,8 @@ function sidebar(): DefaultTheme.SidebarItem[] {
         { text: 'Describe a system', link: '/docs/describe-system' },
         { text: 'Rule library', link: '/docs/rules' },
         { text: 'Notifications', link: '/docs/notifications' },
+        { text: 'Incidents', link: '/docs/incidents' },
+        { text: 'Quieter rules', link: '/docs/quieter-rules' },
         { text: 'Programs you already run', link: '/docs/existing-programs' },
       ],
     },

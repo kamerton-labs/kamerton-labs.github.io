@@ -23,8 +23,9 @@ system description (SystemDescription resource or a file)
 1. A service sends telemetry to the OpenTelemetry Collector.
 2. The Collector routes it to storage: metrics to Prometheus, logs to Loki, traces to Tempo. From traces it derives call counts, errors and latency.
 3. Prometheus evaluates the rules Kamerton generated. When a condition holds longer than its pending period, the rule fires.
-4. Alertmanager sends a message along the route from the system description.
+4. Alertmanager mutes the alerts that are only consequences of a failing dependency (inhibit rules from `dependsOn`) and sends a message along the route from the system description.
 5. The person on call gets a message: what is wrong, in which service, the current value and threshold, the time in their zone, a link to the runbook.
+6. Alertmanager also calls Kamerton's webhook. About 45 seconds later Kamerton sends a short follow-up with the probable cause and the evidence it found in the Kubernetes API, Prometheus and Loki, and records the incident.
 
 | Part | What it does |
 | --- | --- |
@@ -33,8 +34,9 @@ system description (SystemDescription resource or a file)
 | Loki | Stores logs |
 | Tempo | Stores traces |
 | Grafana | Shows graphs, logs and traces, with a jump from a trace to its logs by `trace_id` |
-| Alertmanager | Sends notifications to Telegram and email, groups repeats |
-| Kamerton | Installs all of the above with one command, turns the description into rules, routes and runbooks, shows it in the UI |
+| Alertmanager | Sends notifications to Telegram and email, groups repeats, mutes consequences of a failing dependency |
+| Kamerton | Installs all of the above with one command, turns the description into rules, routes and runbooks, sends the follow-up, keeps the incident history, shows it all in the UI |
+| OpenTelemetry eBPF Instrumentation | Optional, off by default. Turns HTTP and gRPC calls of services without an SDK into traces |
 
 ## Single source of truth
 
@@ -45,7 +47,10 @@ system description (SystemDescription resource or a file)
 
 - **Discovery.** Lists services that already send telemetry, from span metrics in Prometheus.
 - **Backtest.** Counts how many times a rule would have fired on Prometheus data.
-- **Probable source.** When an alert fires, walks the `dependsOn` graph and shows the chain of affected services.
+- **Probable source.** When an alert fires, walks the `dependsOn` graph and shows the chain of affected services. The same links produce the inhibit rules.
+- **Follow-up.** Takes Alertmanager's webhook, collects evidence about the root service and sends one message per incident. See [Incidents](./incidents).
+- **Incident history.** Keeps incidents with people's notes in a ConfigMap and recalls the last one when the same service fails again.
+- **Noise.** Counts how often each rule fired from `ALERTS` in Prometheus and suggests quieter values. See [Quieter rules](./quieter-rules).
 - **Sets of programs.** Each system reads the Prometheus and Alertmanager of its set; the set's labels go on its PrometheusRule and AlertmanagerConfig.
 
 ## Deleting objects

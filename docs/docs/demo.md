@@ -53,8 +53,18 @@ kubectl -n otel-demo port-forward svc/frontend-proxy 8081:8080
 
 Flags are at `http://localhost:8081/feature`. Turn one on, for example `paymentFailure`. Within a few minutes the alert appears under "Alerts" and in the configured channel. The UI also shows the chain of affected services with the probable source: Kamerton walks the `dependsOn` graph.
 
+To see the grouping by cause and the follow-up message, take a service away entirely:
+
+```sh
+kubectl -n otel-demo scale deployment payment --replicas=0
+```
+
+In about a minute "No ready pods" arrives for `payment`, and about 45 seconds after it Kamerton's follow-up. The errors of `checkout` and `frontend` are muted. Scale it back to 1 a few minutes later: Telegram chats get "Incident over", and a reply to it is kept as what helped. What the messages look like is on the [front page](/), and what they contain in [Incidents](./incidents).
+
+Keep in mind that the "no data" rules and a complete stop in "requests stopped" need a day of history, so on a freshly installed demo they stay quiet.
+
 ## What is in the shop's description
 
-The demo description is a good example of a complete one: metric names in `telemetry`, a short window and short `for` so an alert arrives within minutes, own thresholds for the checkout and payment operations, availability objectives, and the Kafka topic `orders` with two consumer groups.
+The demo description generates 195 rules for 16 services. It is a good example of a complete one: metric names in `telemetry`, a short window and short `for` so an alert arrives within minutes, own thresholds for the checkout and payment operations, availability objectives, and the Kafka topic `orders` with two consumer groups.
 
 [otel-demo/system.yaml](https://github.com/kamerton-labs/examples/blob/main/otel-demo/system.yaml)
