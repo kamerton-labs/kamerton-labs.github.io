@@ -38,6 +38,23 @@ A failure also takes traffic away from what the failed service calls or feeds th
 
 Such an alert gets the label `kamerton_starved="true"` while an alert of a service that feeds it fires, and is muted by the same inhibit rules. That happens only when the starved service has no error, latency or "no ready pods" alert of its own, and only when the feeder's failure is not the starved service's doing. A service that cannot be reached, whose callers fail because of it, is still the cause. For a queue, the consumers are the services named in its `queue.consumerGroups`.
 
+### After the cause is gone
+
+Error rates and error budgets look back over a window, so the alerts of the callers keep firing for some minutes after the cause is fixed. Alertmanager stops muting them the moment the cause resolves, and they would arrive as if something new broke.
+
+Since 0.2.3 Kamerton keeps them quiet. While an alert is muted as a consequence, Kamerton holds an Alertmanager silence on exactly that alert, one matcher per label, authored by `kamerton`, and prolongs it every 30 seconds. When the cause resolves, nothing prolongs the silence any more and it runs out 10 minutes later.
+
+What this does not hide:
+
+- a different alert of the same service, for example another operation or a latency alert that was not part of the incident;
+- an alert that still fires when the silence runs out: it is sent then.
+
+What it can delay: if the caller stays broken for a reason of its own with exactly the same alert, you hear about it up to 10 minutes late.
+
+The Alerts screen still shows these alerts, as the tail of the incident. The silences are visible in Alertmanager. The time is the chart value `incidents.tailMute`; `"0"` turns it off. It needs Kamerton running: without it the silences are not prolonged and the old behaviour returns.
+
+On our test cluster, with `payment` scaled to zero for three and a half minutes, Telegram got two messages: the alert and its resolve. The alerts of `checkout` stayed silenced for six more minutes and cleared without being sent.
+
 ### Turning it off
 
 ```yaml
