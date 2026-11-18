@@ -34,6 +34,14 @@ helm upgrade --install otel-demo open-telemetry/opentelemetry-demo \
   -f ../examples/otel-demo/values-demo.yaml
 ```
 
+Wait until the shop is up before the next step:
+
+```sh
+kubectl -n otel-demo wait --for=condition=Available deployment --all --timeout=10m
+```
+
+While its services start, they answer each other with errors for a few minutes. Described too early, the shop greets you with alerts about its own start-up; they clear by themselves.
+
 ## 3. Describe the shop and open the UI
 
 ```sh
