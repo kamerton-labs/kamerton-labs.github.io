@@ -4,33 +4,37 @@ Kamerton can take system descriptions from a git repository. The repository beco
 
 New in 0.3.0. Tried on the k3s test cluster with a repository of one system: adding a service, a broken file, a name clash, a deleted file, and a change made in the UI that went to a branch, was merged and came back to the cluster.
 
-## Turn it on
+## Connect a repository
+
+Open "Git" in the sidebar, enter the address of the repository and press "Test": Kamerton reads the repository and says what it found, without storing anything. "Connect" then starts following it.
+
+| Field | Meaning |
+| --- | --- |
+| Repository | https address, without credentials. |
+| Branch | The branch to follow; `main` by default. |
+| Folder | The project's root in the repository. Empty: the repository itself. |
+| Token | For a private repository, and for push. Kept in the Secret `kamerton-git`, never shown again. |
+| Push | Off (read only), Pull request, or straight to the branch. |
+
+"Edit" on the same page changes any of it later, and "Disconnect" stops following the repository. Disconnecting deletes nothing: the systems stay and become editable in the UI again.
+
+GitHub, GitLab and Gitea take an access token as the password of HTTP basic auth, and that is how Kamerton sends it. SSH keys are not supported yet.
+
+### From the installation's settings instead
+
+A repository can also be fixed by the installation. It is then shown in the UI and cannot be changed there:
 
 ```sh
 helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-values \
   --set git.url=https://github.com/your-team/observability.git \
-  --set git.path=systems
+  --set git.write=pullRequest
 ```
 
-| Value | Default | Meaning |
-| --- | --- | --- |
-| `git.url` | empty | https URL of the repository, without credentials. Empty: off. |
-| `git.branch` | `main` | The branch to follow. |
-| `git.path` | empty | A folder in the repository. Empty reads the whole repository. |
-| `git.secretName` | `kamerton-git` | Secret with an access token for a private repository. |
-| `git.interval` | `1m` | How often Kamerton looks at the branch. |
-| `git.write` | empty | What "Save" in the UI does to a system from git: nothing, `pullRequest` or `commit`. |
-| `git.provider`, `git.apiURL` | empty | The hosting service, for a self-hosted GitHub or GitLab. |
-| `git.commitStatus` | `false` | Mark every read commit as applied or not. |
-| `git.generatedPath` | empty | A folder for the generated rules, dashboards and runbooks. |
-
-For a private repository create a read-only token and put it in a Secret:
+The values are `git.url`, `git.branch`, `git.path`, `git.secretName`, `git.interval`, `git.write`, `git.provider`, `git.apiURL`, `git.commitStatus` and `git.generatedPath`; the token goes into the Secret:
 
 ```sh
 kubectl -n kamerton create secret generic kamerton-git --from-literal=token='<token>'
 ```
-
-GitHub, GitLab and Gitea take such a token as the password of HTTP basic auth, and that is how Kamerton sends it. SSH keys are not supported yet.
 
 ## The project
 
@@ -85,21 +89,25 @@ Within the interval Kamerton sees the new commit, validates every file, generate
 | The repository cannot be read | Nothing changes and nothing is deleted. |
 | A mistyped folder | Nothing changes and nothing is deleted. |
 
-## Changing a system from git
+## Save, then push
 
-There is one place where such a system changes: its file. How the UI takes part is the setting `git.write`.
+Saving a system from git does not touch the repository or the cluster. The change is kept as a change to push, and the system's page says "Saved, not pushed". So do a new system and a removal.
 
-| `git.write` | What "Save" does in the UI |
+"Git" in the sidebar lists the changes to push, each with what it does to the rules. "Push" opens a "Commit" dialog with the message, and writes all of them in one commit:
+
+| Push mode | What Push does |
 | --- | --- |
-| empty (default) | Nothing. The system is read-only, with its file and commit shown. |
-| `pullRequest` | The change is pushed to a new branch `kamerton/<system>-<commit>`. On GitHub and GitLab Kamerton also opens a pull or merge request and shows its address. The cluster changes after the merge. |
-| `commit` | The change is committed straight to the followed branch and applied within seconds. |
+| Pull request | A new branch `kamerton/<name>-<commit>` and, on GitHub and GitLab, a pull or merge request. The cluster changes after the merge. |
+| Straight to the branch | A commit on the followed branch, applied within seconds. |
+| Off | Nothing can be saved: systems from git are read-only in the UI. |
 
-Both writing modes need a token with write access in the Secret. The commit author is `Kamerton`; the file is edited as it is in the repository, so comments and the lines nobody touched stay as they were. Deleting the system in the UI removes its file the same way. A system created in the UI becomes a new file `<git.path>/<name>.yaml`: with writing on, the repository is where systems are made, and the new system appears in the UI once its file is on the followed branch.
+"Discard" forgets a saved change. Saving the repository's own content again leaves nothing to push. With login on, the person's name goes into the commit.
 
-On a hosting service Kamerton does not know, `pullRequest` still pushes the branch; open the request from it by hand. For a self-hosted GitHub or GitLab set `git.provider` (`github` or `gitlab`) and, if the API is not at the usual path, `git.apiURL`.
+A system created in the UI is pushed as a new file `<systems>/<name>.yaml`; it appears in the UI once its file is on the followed branch. Until then it is listed under the changes to push and cannot be opened.
 
-Without a writing mode, saving or deleting through the API answers `409` with the code `from_git`. With one it answers `202` and says where the change went.
+On a hosting service Kamerton does not know, the branch is pushed and you open the request by hand. For a self-hosted GitHub or GitLab set the provider in the installation's settings.
+
+The same page lists the commits of the followed branch, newest first, with the systems each one touches and the applied one marked.
 
 One thing stays refused in every mode: the changes Kamerton makes to a description by itself, such as a chat or a mail recipient added on the Channels screen. For a system from git put the receiver into its file.
 
@@ -107,9 +115,9 @@ One thing stays refused in every mode: the changes Kamerton makes to a descripti
 
 A system made in the UI or with `kubectl` before git was connected is left alone. It stays editable in the UI and saved to the cluster, whatever the repository holds.
 
-To put such a system under git, use "Move to git" in its menu. Kamerton writes its description to the repository as a new file. The system keeps working as it is; once the file is on the followed branch, the file takes the system over in place. Nothing is deleted and recreated, so its rules never go away. On our test the PrometheusRule of the moved system was the same object before and after.
+To put such a system under git, use "Add to git" in its menu. Its description becomes a change to push: a new file. The system keeps working as it is; once the file is on the followed branch, the file takes the system over in place. Nothing is deleted and recreated, so its rules never go away. On our test the PrometheusRule of the moved system was the same object before and after.
 
-Putting the file into the repository by hand does not do this. If a file names a system that already exists and did not come from this repository, Kamerton does not take it over: the file is reported as a conflict until one of the two is renamed, the existing system is deleted, or it is moved with "Move to git".
+Putting the file into the repository by hand does not do this. If a file names a system that already exists and did not come from this repository, Kamerton does not take it over: the file is reported as a conflict until one of the two is renamed, the existing system is deleted, or it is added with "Add to git".
 
 Files may sit in subfolders of `git.path`, for example one folder per team; Kamerton reads the whole tree. One installation follows one repository, one branch and one folder.
 
@@ -135,12 +143,6 @@ The layout is that of `kamerton generate -o`, so a change made by hand can refre
 ```sh
 kamerton generate -f systems/shop.yaml -o generated/shop
 ```
-
-## In the UI
-
-The project sits at the top of the sidebar: its name, the branch and the folder it is read from, and a dot that turns red when the repository cannot be read or a file is not applied. The "Git" item below opens the repository page: address, branch, applied commit, open pull requests and the description files with their state. "Pull" there reads the branch at once.
-
-Saving a system from git is a push. A "Commit" dialog shows the file and the branch, says which rules change ("cart · KamertonErrorRateHigh: threshold 5% -> 3%") and takes the message. With login on, the person's name goes into the commit.
 
 ## A check in CI
 
