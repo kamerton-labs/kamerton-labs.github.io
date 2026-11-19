@@ -23,6 +23,7 @@ function sidebar(): DefaultTheme.SidebarItem[] {
         { text: 'Rule library', link: '/docs/rules' },
         { text: 'Notifications', link: '/docs/notifications' },
         { text: 'Incidents', link: '/docs/incidents' },
+        { text: 'Looking into a failure', link: '/docs/failure' },
         { text: 'Quieter rules', link: '/docs/quieter-rules' },
         { text: 'Programs you already run', link: '/docs/existing-programs' },
       ],

@@ -15,9 +15,11 @@ The container image is published, but a chart repository is not. You install the
 ## 1. Get the chart
 
 ```sh
-git clone https://github.com/kamerton-labs/kamerton.git
+git clone --branch v0.3.0 https://github.com/kamerton-labs/kamerton.git
 cd kamerton
 ```
+
+`--branch v0.3.0` takes the released version. Without it you get `main`, which may already hold changes of the next one.
 
 The image is `ghcr.io/kamerton-labs/kamerton`, built for linux/amd64 and linux/arm64. The chart uses the tag that matches its version, so there is nothing to build.
 

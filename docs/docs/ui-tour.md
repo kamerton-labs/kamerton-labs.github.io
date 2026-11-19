@@ -2,13 +2,19 @@
 
 The UI is built into the same binary as the core: nothing extra to install. It edits system descriptions and shows what is happening to them. The UI is in English by default; Russian is picked in the language menu in the sidebar. It has a light and a dark theme.
 
-The screenshots were taken from the real UI run locally without a cluster and without Prometheus. So wherever live data is needed - rule states, discovered services, active alerts - they read "no data" or "not connected".
+Most screenshots were taken from the real UI run locally without a cluster and without Prometheus. So wherever live data is needed - rule states, discovered services, active alerts - they read "no data" or "not connected". The Now screen is from a real install next to the demo shop.
 
 ## Systems
 
 The list of systems with their state: number of services, rules and channels, and whether anything is firing. The "Getting started" block shows what is not done yet: connect Prometheus, find services, create rules, connect a channel. "Add system" creates a new description.
 
 <Shot name="systems" alt="Systems screen: a four-step getting-started block and the otel-demo system card with its counts of services, rules and channels" />
+
+## Now
+
+A system opens here. One sentence on what is broken and since when, a bar for each availability objective, and the live map: requests, p95 and errors on every service, the source of a failure in red, the services it drags along marked "because of" it, arrows red where calls fail. A service opens its page with charts, what changed in its pods and its requests; a request opens on its steps and logs. All of it is in [Looking into a failure](./failure).
+
+<Shot name="now" alt="Now screen of the otel-demo system: Failure in checkout, the availability bars of checkout and payment, the map with checkout marked as the source" />
 
 ## Diagram
 

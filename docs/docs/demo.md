@@ -9,7 +9,7 @@ All files are in [kamerton-labs/examples](https://github.com/kamerton-labs/examp
 A small Kubernetes cluster (kind, k3s, colima), `kubectl` and `helm`. Clone both repositories side by side:
 
 ```sh
-git clone https://github.com/kamerton-labs/kamerton.git
+git clone --branch v0.3.0 https://github.com/kamerton-labs/kamerton.git
 git clone https://github.com/kamerton-labs/examples.git
 cd kamerton
 ```

@@ -1,6 +1,6 @@
 # Limitations and status
 
-Version 0.2.4, early. Below: what works, where it was tried and what is missing. We do not promise dates.
+Version 0.3.0, early. Below: what works, where it was tried and what is missing. We do not promise dates.
 
 ## What works
 
@@ -8,11 +8,11 @@ Covered by unit tests:
 
 - the description format with validation and JSON Schema;
 - the rule library: every rule file is validated with Prometheus' own parser, and the requests-stopped, "no data" and "no ready pods" rules are also tested with Prometheus' engine;
-- generation of rules, a basic dashboard, Alertmanager routes with the inhibit rules for grouping by cause, and runbook stubs;
+- generation of rules, five Grafana dashboards per system, Alertmanager routes with the inhibit rules for grouping by cause, and runbook stubs;
 - the controller with status conditions;
 - discovery, backtest and probable-source search;
 - the follow-up message, the incident history and the noise statistics, against fake Kubernetes, Prometheus, Loki and Telegram APIs;
-- the UI: systems list, canvas, rules with readable cards, backtest and custom rules, YAML mode, runbook pages, channels, status page;
+- the UI: systems list, the Now screen with the live map, service and request pages, canvas, rules with readable cards, backtest and custom rules, YAML mode, runbook pages, channels, status page;
 - saving descriptions from the UI: custom resource in a cluster, file locally;
 - Telegram and email setup from the UI, Kamerton's own message templates;
 - sets of programs and login.
@@ -45,6 +45,13 @@ Since 0.2.3 the lingering alerts are also kept out of the channels, by a short s
 
 Upgrading to 0.2.3 with `helm upgrade --reuse-values` left the new pod crashing on an empty `incidents.tailMute`; the old pod kept serving. Fixed in 0.2.4, and these pages now use `--reset-then-reuse-values`.
 
+A clean installation of 0.3.0 on the same kind of server, again following [On a Linux server](./linux) and [Demo shop](./demo), and left running to watch a day of it:
+
+- `helm install` took 25 seconds, all pods ran 75 seconds later, the disks of Prometheus, Loki and Tempo were bound;
+- the Now screen, the service page and the request page worked on the shop's live data. The screenshots in [Looking into a failure](./failure) are from it.
+
+Found there in the first hour, on a checkout that waited a minute to write to Kafka, and fixed in the code, not released yet: a request longer than a minute was taken for a load generator's session and shown as one step of it; p95 never read above 15 s, where the spanmetrics connector's buckets ended.
+
 ## Not done yet, and known limits
 
 - **The first day.** Rules that compare with normal need history: an hour for most, a day for the "no data" rules and for a complete stop in "requests stopped". If Prometheus keeps less than about a day of data, those never fire. A service that only works in the daytime is not checked in the hour after its usual start and the hour before its usual end.
@@ -54,14 +61,14 @@ Upgrading to 0.2.3 with `helm upgrade --reuse-values` left the new pod crashing 
 - **The follow-up** goes only through Kamerton's own bot and mail server, only for descriptions in Kamerton's namespace, and only in a cluster. Email gets no "incident over" message, because replies to email do not come back.
 - One shared user, no roles or per-user audit.
 - One cluster per installation. Several clusters are not supported.
-- No long false-alert run yet. A 72-hour run on real traffic is planned.
+- No long false-alert run on real traffic yet. A day on the demo shop is the longest so far.
 - No chart repository yet. The chart is installed from a clone of the repository.
 - No pruning. An object a system stops generating (for example its AlertmanagerConfig after the last receiver is removed) stays until the system itself is deleted. Deleting a system removes all its objects.
 - Email is verified only against a test SMTP server, not a real mail provider.
 - Your own Prometheus needs the Prometheus Operator. Pushing to Prometheus or Grafana HTTP APIs is not implemented.
 - Two languages: the UI and notifications are available in English and Russian, no others.
-- Dashboards are basic.
 - Channels and finding installed programs need a cluster. They cannot be set up when running locally.
+- The pages of a failure compare with the day before, so on the first day their charts have no usual level. The list of slowest requests is a sample of what Tempo returns.
 
 ## Following changes
 

@@ -69,10 +69,10 @@ Installed from their own charts, versions pinned in `Chart.yaml`. Each has `<nam
 
 | Value | What matters |
 | --- | --- |
-| `kube-prometheus-stack` | Prometheus evaluates rules every 15 seconds (`evaluationInterval: 15s`), keeps 15 days (`retention: 15d`), accepts remote write from the Collector and samples up to 30 minutes late (`tsdb.outOfOrderTimeWindow: 30m`; without it one late sample makes Prometheus reject the whole write request). Alertmanager picks AlertmanagerConfigs labelled `kamerton.dev/managed: "true"` and keeps their matchers as written (`alertmanagerConfigMatcherStrategy: None`), which the grouping by cause needs. |
-| `grafana` | The chart generates the admin password into the Secret `kamerton-grafana`. Data sources: the bundled Prometheus, Loki and Tempo. Dashboards are picked up from ConfigMaps labelled `grafana_dashboard`. |
+| `kube-prometheus-stack` | Prometheus evaluates rules every 15 seconds (`evaluationInterval: 15s`), keeps 15 days (`retention: 15d`) on a disk of its own (`storageSpec`, 20Gi; `retentionSize: 18GB` drops the oldest days before it fills), accepts remote write from the Collector and samples up to 30 minutes late (`tsdb.outOfOrderTimeWindow: 30m`; without it one late sample makes Prometheus reject the whole write request). Alertmanager picks AlertmanagerConfigs labelled `kamerton.dev/managed: "true"` and keeps their matchers as written (`alertmanagerConfigMatcherStrategy: None`), which the grouping by cause needs. |
+| `grafana` | The chart generates the admin password into the Secret `kamerton-grafana`. Data sources: the bundled Prometheus, Loki and Tempo. Dashboards are picked up from ConfigMaps labelled `grafana_dashboard`. Kamerton writes five dashboards per system there: overview, services, queues, infrastructure, SLO. The Loki and Tempo data sources link a log line to its trace and a trace to its logs. |
 | `loki` | One instance, filesystem storage. |
-| `tempo` | Chart defaults. |
+| `tempo` | Traces are kept for a week (`tempo.tempo.retention: 168h`) on a disk of their own (`persistence`, 10Gi), so they outlast a restart. The demo shop writes about 0.7 GB a day; give a busier system a bigger disk or an object store. Tempo also counts the calls between services (the service graph) and writes them to Prometheus. |
 | `opentelemetry-collector` | Takes OTLP. Traces to Tempo, span metrics (spanmetrics, flushed every 15 seconds) to Prometheus, logs to Loki. `metrics_expiration: 2m` stops exporting a silent service, so that its "no data" alert can fire. |
 | `opentelemetry-ebpf-instrumentation` | Off unless `autoInstrument.enabled`. See below. |
 

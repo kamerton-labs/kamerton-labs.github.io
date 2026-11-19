@@ -25,7 +25,7 @@ export function useMotionGate(target: Ref<HTMLElement | null>) {
         (entries) => {
           for (const e of entries) onScreen.value = e.isIntersecting
         },
-        { threshold: 0.35 },
+        { threshold: 0.2 },
       )
       io.observe(target.value)
     }

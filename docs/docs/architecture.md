@@ -10,7 +10,7 @@ Kamerton is one Go binary. It serves the HTTP API and the web UI (React, embedde
 system description (SystemDescription resource or a file)
    │
    ├─► validate: JSON Schema and semantic checks
-   ├─► generate: Prometheus rules, Grafana dashboard,
+   ├─► generate: Prometheus rules, five Grafana dashboards,
    │             Alertmanager routes, runbook stubs
    ├─► apply:    PrometheusRule, AlertmanagerConfig, ConfigMaps
    │             (server-side apply)
@@ -49,6 +49,7 @@ system description (SystemDescription resource or a file)
 - **Backtest.** Counts how many times a rule would have fired on Prometheus data.
 - **Probable source.** When an alert fires, walks the `dependsOn` graph and shows the chain of affected services. The same links produce the inhibit rules.
 - **Follow-up.** Takes Alertmanager's webhook, collects evidence about the root service and sends one message per incident. See [Incidents](./incidents).
+- **Looking into a failure.** Reads Prometheus, Tempo, Loki and the Kubernetes API on demand for the Now screen, the service and request pages. See [Looking into a failure](./failure).
 - **Incident history.** Keeps incidents with people's notes in a ConfigMap and recalls the last one when the same service fails again.
 - **Noise.** Counts how often each rule fired from `ALERTS` in Prometheus and suggests quieter values. See [Quieter rules](./quieter-rules).
 - **Sets of programs.** Each system reads the Prometheus and Alertmanager of its set; the set's labels go on its PrometheusRule and AlertmanagerConfig.

@@ -2,11 +2,11 @@
 
 A short path from a plain Linux server to a running Kamerton. Kamerton itself runs in Kubernetes, so the first step is a small single-node cluster on the server.
 
-This is what we ran: Kamerton 0.2.0, then 0.2.1, with the demo shop on one Ubuntu 24.04 server that was already busy with nginx and Docker workloads.
+This is what we ran: Kamerton 0.2.0, then 0.2.1, and later a clean 0.3.0, with the demo shop on one Ubuntu 24.04 server that was already busy with nginx and Docker workloads.
 
 ## What it takes
 
-Measured on that run:
+Measured on the 0.3.0 run:
 
 | | Memory | Notes |
 | --- | --- | --- |
@@ -14,9 +14,9 @@ Measured on that run:
 | The demo shop | about 3 GB | optional |
 | The cluster itself with everything in it | about 8 GB | as Docker reported for the node container |
 
-Disk: about 16 GB of container images with the shop, plus 10 GB claimed for Loki. Prometheus grows with what you keep.
+Disk: about 16 GB of container images with the shop. The chart claims 20 GB for Prometheus (15 days), 10 GB for Loki and 10 GB for Tempo (a week of traces). On the demo shop each of Prometheus and Tempo grows by roughly 0.7 GB a day.
 
-Installation took under a minute from `helm install` to all pods running, on a fast connection.
+`helm install` itself took 25 seconds, and all pods were running 75 seconds after it, on a fast connection.
 
 ## 1. A cluster
 
@@ -59,7 +59,7 @@ Two things to check first:
 The same as in the [Quick start](./quick-start):
 
 ```sh
-git clone https://github.com/kamerton-labs/kamerton.git
+git clone --branch v0.3.0 https://github.com/kamerton-labs/kamerton.git
 cd kamerton
 helm install kamerton ./deploy/helm/kamerton \
   --namespace kamerton --create-namespace --dependency-update \
