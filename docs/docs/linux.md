@@ -59,7 +59,7 @@ Two things to check first:
 The same as in the [Quick start](./quick-start):
 
 ```sh
-git clone --branch v0.3.0 https://github.com/kamerton-labs/kamerton.git
+git clone --branch v0.3.1 https://github.com/kamerton-labs/kamerton.git
 cd kamerton
 helm install kamerton ./deploy/helm/kamerton \
   --namespace kamerton --create-namespace --dependency-update \

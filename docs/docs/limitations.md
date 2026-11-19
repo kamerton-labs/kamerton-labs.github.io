@@ -1,6 +1,6 @@
 # Limitations and status
 
-Version 0.3.0, early. Below: what works, where it was tried and what is missing. We do not promise dates.
+Version 0.3.1, early. Below: what works, where it was tried and what is missing. We do not promise dates.
 
 ## What works
 
@@ -32,7 +32,7 @@ A single-node k3s cluster with the OpenTelemetry Demo:
 A clean installation of 0.2.0, later upgraded to 0.2.1, on an Ubuntu 24.04 server, k3s inside Docker, following [On a Linux server](./linux):
 
 - the chart installs from the published image, all pods run within a minute;
-- the demo description produces its 195 rules;
+- the demo description produces its rules (196 since 0.3.1);
 - with payment scaled to zero the alert about the cause arrives, the alerts of its callers are muted, the evidence names the scaling, and the incident lands in the history.
 
 Grouping by cause, the follow-up, the incident history, the "Useful" and "Noise" buttons and the noise statistics are new in 0.2.0. Each was tried on these two clusters and nowhere else yet.
@@ -50,7 +50,9 @@ A clean installation of 0.3.0 on the same kind of server, again following [On a 
 - `helm install` took 25 seconds, all pods ran 75 seconds later, the disks of Prometheus, Loki and Tempo were bound;
 - the Now screen, the service page and the request page worked on the shop's live data. The screenshots in [Looking into a failure](./failure) are from it.
 
-Found there in the first hour, on a checkout that waited a minute to write to Kafka, and fixed in the code, not released yet: a request longer than a minute was taken for a load generator's session and shown as one step of it; p95 never read above 15 s, where the spanmetrics connector's buckets ended.
+Found there in the first hours, all on a checkout that waited a minute to write to Kafka, and fixed in 0.3.1: a request longer than a minute was taken for a load generator's session and shown as one step of it; p95 never read above 15 s, where the spanmetrics connector's buckets ended; one latency rule flapped 22 times in 3 hours and sent a message each time, so every rule now keeps firing for 5 minutes after its condition drops out.
+
+The wait itself is the demo's: its checkout confirms a write to Kafka only when the next order is written, so with no fault on, checkout takes 20-90 s and the proxy answers 504 to a few percent of orders. The demo description now sets thresholds above that wait, and says why. Before the change the server sent 13 messages in 75 minutes; in the first 20 minutes after it, none. A 72-hour run with no faults is under way.
 
 ## Not done yet, and known limits
 

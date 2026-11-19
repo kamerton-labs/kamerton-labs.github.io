@@ -15,11 +15,11 @@ The container image is published, but a chart repository is not. You install the
 ## 1. Get the chart
 
 ```sh
-git clone --branch v0.3.0 https://github.com/kamerton-labs/kamerton.git
+git clone --branch v0.3.1 https://github.com/kamerton-labs/kamerton.git
 cd kamerton
 ```
 
-`--branch v0.3.0` takes the released version. Without it you get `main`, which may already hold changes of the next one.
+`--branch v0.3.1` takes the released version. Without it you get `main`, which may already hold changes of the next one.
 
 The image is `ghcr.io/kamerton-labs/kamerton`, built for linux/amd64 and linux/arm64. The chart uses the tag that matches its version, so there is nothing to build.
 
@@ -90,9 +90,12 @@ helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-valu
 ## Upgrade
 
 ```sh
-git pull
+git fetch --tags
+git checkout v0.3.1
 helm upgrade kamerton ./deploy/helm/kamerton -n kamerton --reset-then-reuse-values
 ```
+
+A clone made with `--branch` sits on a tag, not on a branch, so `git pull` has nothing to follow there: check out the new tag instead. What changed between versions, and any step an upgrade needs, is in [CHANGELOG.md](https://github.com/kamerton-labs/kamerton/blob/main/CHANGELOG.md).
 
 `--reset-then-reuse-values` keeps the values you set and takes the defaults of new settings from the new chart. Plain `--reuse-values` does not know the new settings; with 0.2.3 that left the new pod crashing. Needs Helm 3.14 or newer.
 

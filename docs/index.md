@@ -14,7 +14,7 @@ description: Kamerton writes alert rules and routes for Prometheus and Alertmana
 
 Not about checkout and frontend that fail with it. One alert about the cause, then a short message with the evidence, then a page that shows where it broke.
 
-<p class="k-meta">Version 0.3.0, early. AGPL-3.0. <a href="/docs/quick-start">Quick start</a> · <a href="https://github.com/kamerton-labs/kamerton">GitHub</a> · <a href="https://github.com/kamerton-labs/kamerton/blob/main/CHANGELOG.md">What is new</a></p>
+<p class="k-meta">Version 0.3.1, early. AGPL-3.0. <a href="/docs/quick-start">Quick start</a> · <a href="https://github.com/kamerton-labs/kamerton">GitHub</a> · <a href="https://github.com/kamerton-labs/kamerton/blob/main/CHANGELOG.md">What is new</a></p>
 
 </header>
 
@@ -82,7 +82,7 @@ Not about checkout and frontend that fail with it. One alert about the cause, th
 
 ## From a short description
 
-Services, their type, what they call. The rest is generated: 195 rules for the 16 services of the demo shop, routes, dashboards.
+Services, their type, what they call. The rest is generated: 196 rules for the 16 services of the demo shop, routes, dashboards.
 
 <div class="k-pair k-wide">
 <div class="k-pair__side vp-doc">
@@ -113,7 +113,7 @@ spec:
 </div>
 <div class="k-pair__side vp-doc">
 
-<p class="k-file">kamerton generate -f system.yaml, one rule of 195</p>
+<p class="k-file">kamerton generate -f system.yaml, one rule of 196</p>
 
 ```yaml
 - alert: KamertonErrorRateHigh
@@ -174,7 +174,7 @@ Scroll, and follow one failing payment.
 <div class="vp-doc k-wide-code">
 
 ```sh
-git clone --branch v0.3.0 https://github.com/kamerton-labs/kamerton.git && cd kamerton
+git clone --branch v0.3.1 https://github.com/kamerton-labs/kamerton.git && cd kamerton
 helm install kamerton ./deploy/helm/kamerton \
   --namespace kamerton --create-namespace --dependency-update \
   --set externalURL=http://localhost:8080

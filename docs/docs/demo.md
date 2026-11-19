@@ -9,7 +9,7 @@ All files are in [kamerton-labs/examples](https://github.com/kamerton-labs/examp
 A small Kubernetes cluster (kind, k3s, colima), `kubectl` and `helm`. Clone both repositories side by side:
 
 ```sh
-git clone --branch v0.3.0 https://github.com/kamerton-labs/kamerton.git
+git clone --branch v0.3.1 https://github.com/kamerton-labs/kamerton.git
 git clone https://github.com/kamerton-labs/examples.git
 cd kamerton
 ```
@@ -75,6 +75,6 @@ Keep in mind that the "no data" rules and a complete stop in "requests stopped" 
 
 ## What is in the shop's description
 
-The demo description generates 195 rules for 16 services. It is a good example of a complete one: metric names in `telemetry`, a short window and short `for` so an alert arrives within minutes, own thresholds for the checkout and payment operations, availability objectives, and the Kafka topic `orders` with two consumer groups.
+The demo description generates 196 rules for 16 services. It is a good example of a complete one: metric names in `telemetry`, a short window and short `for` so an alert arrives within minutes, own thresholds for the checkout and payment operations, availability objectives, and the Kafka topic `orders` with two consumer groups.
 
 [otel-demo/system.yaml](https://github.com/kamerton-labs/examples/blob/main/otel-demo/system.yaml)
